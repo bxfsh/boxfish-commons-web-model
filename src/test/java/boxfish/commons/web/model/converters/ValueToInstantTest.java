@@ -30,10 +30,22 @@ public class ValueToInstantTest {
         assertEquals(Instant.ofEpochMilli(32), new ValueToInstant(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_decimal() throws Exception {
         final BigDecimal expected = new BigDecimal("15.19384");
-        new ValueToInstant(expected).parse();
+        assertEquals(Instant.ofEpochMilli(15), new ValueToInstant(expected).parse());
+    }
+
+    @Test
+    public void parse_from_float() throws Exception {
+        final Float expected = Float.valueOf("15.19384");
+        assertEquals(Instant.ofEpochMilli(15), new ValueToInstant(expected).parse());
+    }
+
+    @Test
+    public void parse_from_double() throws Exception {
+        final Double expected = Double.valueOf("15.19384");
+        assertEquals(Instant.ofEpochMilli(15), new ValueToInstant(expected).parse());
     }
 
     @Test

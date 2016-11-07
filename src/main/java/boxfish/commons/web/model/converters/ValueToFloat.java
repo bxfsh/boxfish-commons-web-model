@@ -4,51 +4,50 @@ import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
- * Sophisticated type conversion and parsing from Object to Short,
+ * Sophisticated type conversion and parsing from Object to Float,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
  * 
  * @author Hudson Mendes
  *
  */
-public class ValueToShort extends AbstractValueConverter<Short> {
+public class ValueToFloat extends AbstractValueConverter<Float> {
 
-    public ValueToShort(final Object value) {
+    public ValueToFloat(final Object value) {
         super(value);
     }
 
     @Override
-    public Short parse() throws Exception {
+    public Float parse() throws Exception {
         if (getValue() == null)
             return null;
 
         if (String.class.equals(getValueClass()))
-            return new Short((String) getValue());
-
-        if (Float.class.equals(getValueClass()))
-            return ((Float) getValue()).shortValue();
-
-        if (Double.class.equals(getValueClass()))
-            return ((Double) getValue()).shortValue();
-
-        if (Byte.class.equals(getValueClass()))
-            return ((Byte) getValue()).shortValue();
-
-        if (Short.class.equals(getValueClass()))
-            return (Short) getValue();
-
-        if (Integer.class.equals(getValueClass()))
-            return ((Integer) getValue()).shortValue();
-
-        if (Long.class.equals(getValueClass()))
-            return ((Long) getValue()).shortValue();
+            return new Float((String) getValue());
 
         if (BigDecimal.class.equals(getValueClass()))
-            return ((BigDecimal) getValue()).shortValue();
+            return Float.valueOf(((BigDecimal) getValue()).toString());
+
+        if (Float.class.equals(getValueClass()))
+            return Float.valueOf((Float) getValue());
+
+        if (Double.class.equals(getValueClass()))
+            return ((Double) getValue()).floatValue();
+
+        if (Byte.class.equals(getValueClass()))
+            return Float.valueOf((Byte) getValue());
+
+        if (Short.class.equals(getValueClass()))
+            return Float.valueOf((Short) getValue());
+
+        if (Integer.class.equals(getValueClass()))
+            return Float.valueOf((Integer) getValue());
+
+        if (Long.class.equals(getValueClass()))
+            return Float.valueOf((Long) getValue());
 
         throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Short",
+            "Impossible to convert %s to Float",
             getValueClass().getName()));
     }
-
 }

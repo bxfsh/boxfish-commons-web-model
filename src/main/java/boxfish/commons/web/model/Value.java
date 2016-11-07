@@ -2,12 +2,16 @@ package boxfish.commons.web.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 import boxfish.commons.web.model.converters.ValueToBigDecimal;
 import boxfish.commons.web.model.converters.ValueToBoolean;
 import boxfish.commons.web.model.converters.ValueToByte;
+import boxfish.commons.web.model.converters.ValueToDouble;
+import boxfish.commons.web.model.converters.ValueToFloat;
 import boxfish.commons.web.model.converters.ValueToInstant;
 import boxfish.commons.web.model.converters.ValueToInteger;
+import boxfish.commons.web.model.converters.ValueToList;
 import boxfish.commons.web.model.converters.ValueToLong;
 import boxfish.commons.web.model.converters.ValueToModel;
 import boxfish.commons.web.model.converters.ValueToShort;
@@ -103,6 +107,28 @@ public class Value {
     }
 
     /**
+     * Presets the value as Float. Works on most
+     * of Numeric types and numeric Strings.
+     * 
+     * @return a Float representing the value.
+     * @throws Exception raised if the type conversion fails.
+     */
+    public Float asFloat() throws Exception {
+        return new ValueToFloat(value).parse();
+    }
+
+    /**
+     * Presets the value as Double. Works on most
+     * of Numeric types and numeric Strings.
+     * 
+     * @return a Double representing the value.
+     * @throws Exception raised if the type conversion fails.
+     */
+    public Double asDouble() throws Exception {
+        return new ValueToDouble(value).parse();
+    }
+
+    /**
      * Presents the value as Instant.
      * 
      * @return an Instant representing the value.
@@ -122,6 +148,17 @@ public class Value {
      */
     public Model asModel() throws Exception {
         return new ValueToModel(value).parse();
+    }
+
+    /**
+     * Presents the value as a List of a particular type.
+     * 
+     * @param clazz the type of the entry in the list.
+     * @return a List<Value> representing the value.
+     * @throws Exception raised if the type conversion fails.
+     */
+    public List<Value> asList() throws Exception {
+        return new ValueToList(value).parse();
     }
 
     /**

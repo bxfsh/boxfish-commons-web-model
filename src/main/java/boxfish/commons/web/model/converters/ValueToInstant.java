@@ -1,13 +1,14 @@
 package boxfish.commons.web.model.converters;
 
 import java.io.InvalidClassException;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
  * Sophisticated type conversion and parsing from Object to Instant,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -34,11 +35,20 @@ public class ValueToInstant extends AbstractValueConverter<Instant> {
         if (Long.class.equals(getValueClass()))
             return Instant.ofEpochMilli(((Long) getValue()).longValue());
 
+        if (BigDecimal.class.equals(getValueClass()))
+            return Instant.ofEpochMilli(((BigDecimal) getValue()).longValue());
+
+        if (Float.class.equals(getValueClass()))
+            return Instant.ofEpochMilli(((Float) getValue()).longValue());
+
+        if (Double.class.equals(getValueClass()))
+            return Instant.ofEpochMilli(((Double) getValue()).longValue());
+
         if (Instant.class.equals(getValueClass()))
             return (Instant) getValue();
 
         throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Integer",
+            "Impossible to convert %s to Instant",
             getValueClass().getName()));
     }
 

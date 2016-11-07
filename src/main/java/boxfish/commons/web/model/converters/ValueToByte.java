@@ -25,6 +25,15 @@ public class ValueToByte extends AbstractValueConverter<Byte> {
         if (String.class.equals(getValueClass()))
             return new Byte((String) getValue());
 
+        if (BigDecimal.class.equals(getValueClass()))
+            return ((BigDecimal) getValue()).byteValue();
+
+        if (Float.class.equals(getValueClass()))
+            return ((Float) getValue()).byteValue();
+
+        if (Double.class.equals(getValueClass()))
+            return ((Double) getValue()).byteValue();
+
         if (Byte.class.equals(getValueClass()))
             return (Byte) getValue();
 
@@ -36,12 +45,6 @@ public class ValueToByte extends AbstractValueConverter<Byte> {
 
         if (Long.class.equals(getValueClass()))
             return ((Long) getValue()).byteValue();
-
-        if (BigDecimal.class.equals(getValueClass()))
-            return ((BigDecimal) getValue()).byteValue();
-
-        if (Byte.class.equals(getValueClass()))
-            return ((Byte) getValue()).byteValue();
 
         throw new InvalidClassException(String.format(
             "Impossible to convert %s to Byte",

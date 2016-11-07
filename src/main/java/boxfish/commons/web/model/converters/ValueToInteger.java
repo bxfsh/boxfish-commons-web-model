@@ -28,6 +28,12 @@ public class ValueToInteger extends AbstractValueConverter<Integer> {
         if (BigDecimal.class.equals(getValueClass()))
             return ((BigDecimal) getValue()).intValue();
 
+        if (Float.class.equals(getValueClass()))
+            return ((Float) getValue()).intValue();
+
+        if (Double.class.equals(getValueClass()))
+            return ((Double) getValue()).intValue();
+
         if (Byte.class.equals(getValueClass()))
             return ((Byte) getValue()).intValue();
 

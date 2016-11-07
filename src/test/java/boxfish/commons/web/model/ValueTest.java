@@ -54,6 +54,18 @@ public class ValueTest {
     }
 
     @Test
+    public void asFloat() throws Exception {
+        Float expected = new Float("12.3");
+        assertEquals(expected, new Value(expected).asFloat());
+    }
+
+    @Test
+    public void asDouble() throws Exception {
+        Double expected = new Double("12.3");
+        assertEquals(expected, new Value(expected).asDouble());
+    }
+
+    @Test
     public void asInstant() throws Exception {
         Instant expected = Instant.now();
         assertEquals(expected, new Value(expected).asInstant());
