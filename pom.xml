@@ -113,7 +113,7 @@
         </plugins>
     </build>
     
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <organization>
         <name>Boxfish</name>
         <url>http://www.boxfish.com</url>
