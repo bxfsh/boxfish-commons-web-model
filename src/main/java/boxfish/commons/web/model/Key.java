@@ -11,9 +11,11 @@ package boxfish.commons.web.model;
  *
  */
 class Key {
-    private static final Character SPLITTER = '_';
+    
     private final String field;
 
+    private static final String REGEX = "([a-z])([A-Z]+)";
+    
     /**
      * Constructs the key with a key using any case
      * for the field name.
@@ -32,85 +34,16 @@ class Key {
      */
     public String build() {
         assertRequirements();
-        return treat(field);
+        return treat(this.field);
     }
 
     private void assertRequirements() throws IllegalAccessError {
-        if (field == null || field.trim().equals(""))
+        if (this.field == null || this.field.trim().equals(""))
             throw new IllegalAccessError("The 'field' can't be null");
     }
 
     private String treat(final String field) {
-        final StringBuilder output = new StringBuilder();
-        if (field != null)
-            for (int i = 0; i < field.length(); i++) {
-                final char letter = field.charAt(i);
-                processSplitter(output, letter);
-                processAlphabeticLetter(output, letter);
-                processDigitLetter(output, letter);
-            }
-        return output.toString();
+        return field.replaceAll(REGEX, "$1_$2").toLowerCase();
     }
 
-    private void processSplitter(
-            final StringBuilder output,
-            final char letter) {
-        final Boolean hasAnyChar = hasAnyChar(output);
-        final Boolean lastASplitter = isLastASplitter(output);
-        final Boolean isSplitter = SPLITTER.equals(letter);
-        if (hasAnyChar && !lastASplitter && isSplitter)
-            output.append(SPLITTER);
-    }
-
-    private void processAlphabeticLetter(
-            final StringBuilder output,
-            final char letter) {
-
-        if (Character.isAlphabetic(letter)) {
-            final Boolean shouldBeSeparated = Character.isUpperCase(letter) || isLastADigit(output);
-            final Boolean hasAnyChar = hasAnyChar(output);
-            final Boolean lastASplitter = isLastASplitter(output);
-            if (hasAnyChar && !lastASplitter && shouldBeSeparated)
-                output.append(SPLITTER);
-
-            output.append(Character.toLowerCase(letter));
-        }
-    }
-
-    private void processDigitLetter(
-            final StringBuilder output,
-            final char letter) {
-
-        if (Character.isDigit(letter)) {
-            final Boolean hasAnyChar = hasAnyChar(output);
-            final Boolean lastASplitter = isLastASplitter(output);
-            final Boolean lastADigit = isLastADigit(output);
-            if (hasAnyChar && !lastASplitter && !lastADigit)
-                output.append(SPLITTER);
-
-            output.append(letter);
-        }
-    }
-
-    private Boolean isLastADigit(final StringBuilder output) {
-        final Boolean hasAnyChar = hasAnyChar(output);
-        if (!hasAnyChar)
-            return false;
-
-        final char lastChar = output.charAt(output.length() - 1);
-        return Character.isDigit(lastChar);
-    }
-
-    private Boolean hasAnyChar(final StringBuilder output) {
-        return output.length() > 0;
-    }
-
-    private Boolean isLastASplitter(final StringBuilder output) {
-        final Boolean hasAnyChar = hasAnyChar(output);
-        if (!hasAnyChar)
-            return false;
-
-        final char lastChar = output.charAt(output.length() - 1);
-        return SPLITTER.equals(lastChar);
-    }
 }
