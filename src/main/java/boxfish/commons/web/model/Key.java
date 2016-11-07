@@ -14,7 +14,8 @@ class Key {
     
     private final String field;
 
-    private static final String REGEX = "([a-z])([A-Z]+)";
+    private static final String SPECIAL_CHARACTERS = "[^\\w\\s\\-_]";
+    private static final String SNAKE_CASE = "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|(?<=[a-zA-‌​Z])(?=[0-9])";
     
     /**
      * Constructs the key with a key using any case
@@ -43,7 +44,11 @@ class Key {
     }
 
     private String treat(final String field) {
-        return field.replaceAll(REGEX, "$1_$2").toLowerCase();
+        
+        return field
+                .replaceAll(SPECIAL_CHARACTERS, "")
+                .replaceAll(SNAKE_CASE, "_$0")
+                .toLowerCase();
     }
 
 }
