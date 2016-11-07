@@ -295,22 +295,25 @@ public class Model implements Map<String, Object> {
     public String toString() {
         final StringBuilder output = new StringBuilder();
         output.append("[");
-        keySet().forEach(key -> {
-            try {
-                final Value raw = get(key);
-                if (raw != null) {
-                    final String value = raw.asString();
-                    if (output.length() > 1)
-                        output.append(";");
-                    output.append(key);
-                    output.append("=");
-                    output.append(value);
+        keySet()
+            .stream()
+            .sorted()
+            .forEach(key -> {
+                try {
+                    final Value raw = get(key);
+                    if (raw != null) {
+                        final String value = raw.asString();
+                        if (output.length() > 1)
+                            output.append(";");
+                        output.append(key);
+                        output.append("=");
+                        output.append(value);
+                    }
                 }
-            }
-            catch (final Exception e) {
-                e.printStackTrace();
-            }
-        });
+                catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            });
         output.append("]");
         return output.toString();
     }
