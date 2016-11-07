@@ -28,6 +28,12 @@ public class ValueToLong extends AbstractValueConverter<Long> {
         if (BigDecimal.class.equals(getValueClass()))
             return ((BigDecimal) getValue()).longValue();
 
+        if (Float.class.equals(getValueClass()))
+            return ((Float) getValue()).longValue();
+
+        if (Double.class.equals(getValueClass()))
+            return ((Double) getValue()).longValue();
+
         if (Byte.class.equals(getValueClass()))
             return ((Byte) getValue()).longValue();
 

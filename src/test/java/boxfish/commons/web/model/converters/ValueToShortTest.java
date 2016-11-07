@@ -36,6 +36,18 @@ public class ValueToShortTest {
         assertEquals(Short.valueOf("12"), new ValueToShort(expected).parse());
     }
 
+    @Test
+    public void parse_from_float() throws Exception {
+        final Float expected = Float.valueOf("15.19384");
+        assertEquals(Short.valueOf("15"), new ValueToShort(expected).parse());
+    }
+
+    @Test
+    public void parse_from_double() throws Exception {
+        final Double expected = Double.valueOf("15.19384");
+        assertEquals(Short.valueOf("15"), new ValueToShort(expected).parse());
+    }
+
     @Test(expected = InvalidClassException.class)
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();

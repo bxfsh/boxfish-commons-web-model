@@ -37,6 +37,18 @@ public class ValueToBooleanTest {
     }
 
     @Test(expected = InvalidClassException.class)
+    public void parse_from_float() throws Exception {
+        final Float expected = new Float("12.5793");
+        new ValueToBoolean(expected).parse();
+    }
+
+    @Test(expected = InvalidClassException.class)
+    public void parse_from_double() throws Exception {
+        final Double expected = new Double("12.5793");
+        new ValueToBoolean(expected).parse();
+    }
+
+    @Test(expected = InvalidClassException.class)
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();
         new ValueToBoolean(expected).parse();
