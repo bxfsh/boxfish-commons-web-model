@@ -1,102 +1,122 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.boxfish</groupId>
-	<artifactId>boxfish-commons-web-model</artifactId>
-	<version>1.0.0</version>  
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.boxfish</groupId>
+    <artifactId>boxfish-commons-web-model</artifactId>
+    <version>1.0.0</version>  
 	
-	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Open Source auxiliary libraries for building RESTful microservices.</description>
-	<url>http://github.com/bxfsh/boxfish-commons-web-model</url>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Open Source auxiliary libraries for building RESTful microservices.</description>
+    <url>http://github.com/bxfsh/boxfish-commons-web-model</url>
 	
-	<licenses>
-		<license>
-			<name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
-			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
 	
-	<developers>
-		<developer>
-			<name>Hudson Mendes</name>
-			<email>hudson@boxfish.com</email>
-			<organization>Boxfish</organization>
-			<organizationUrl>http://www.boxfish.com</organizationUrl>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Hudson Mendes</name>
+            <email>hudson@boxfish.com</email>
+            <organization>Boxfish</organization>
+            <organizationUrl>http://www.boxfish.com</organizationUrl>
+        </developer>
+    </developers>
 	
-	<scm>
-		<connection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</connection>
-		<developerConnection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
-		<url>http://github.com/bxfsh/boxfish-commons-web-model/tree/master/</url>
-	</scm>
+    <scm>
+        <connection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</connection>
+        <developerConnection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
+        <url>http://github.com/bxfsh/boxfish-commons-web-model/tree/master/</url>
+    </scm>
   
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<packaging>pom</packaging>
-	<organization>
-		<name>Boxfish</name>
-		<url>http://www.boxfish.com</url>
-	</organization>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <packaging>pom</packaging>
+    <organization>
+        <name>Boxfish</name>
+        <url>http://www.boxfish.com</url>
+    </organization>
+    
 </project>
