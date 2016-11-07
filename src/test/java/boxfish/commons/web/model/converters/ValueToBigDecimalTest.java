@@ -36,6 +36,18 @@ public class ValueToBigDecimalTest {
         assertEquals(new BigDecimal("15.19384"), new ValueToBigDecimal(expected).parse());
     }
 
+    @Test
+    public void parse_from_float() throws Exception {
+        final Float expected = new Float("15.19384");
+        assertEquals(new BigDecimal("15.19384"), new ValueToBigDecimal(expected).parse());
+    }
+
+    @Test
+    public void parse_from_double() throws Exception {
+        final Double expected = new Double("15.19384");
+        assertEquals(new BigDecimal("15.19384"), new ValueToBigDecimal(expected).parse());
+    }
+
     @Test(expected = InvalidClassException.class)
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();

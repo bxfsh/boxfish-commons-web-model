@@ -4,51 +4,50 @@ import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
- * Sophisticated type conversion and parsing from Object to Short,
+ * Sophisticated type conversion and parsing from Object to Double,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
  * 
  * @author Hudson Mendes
  *
  */
-public class ValueToShort extends AbstractValueConverter<Short> {
+public class ValueToDouble extends AbstractValueConverter<Double> {
 
-    public ValueToShort(final Object value) {
+    public ValueToDouble(final Object value) {
         super(value);
     }
 
     @Override
-    public Short parse() throws Exception {
+    public Double parse() throws Exception {
         if (getValue() == null)
             return null;
 
         if (String.class.equals(getValueClass()))
-            return new Short((String) getValue());
+            return new Double((String) getValue());
 
         if (Float.class.equals(getValueClass()))
-            return ((Float) getValue()).shortValue();
+            return Double.valueOf(((Float) getValue()).toString());
 
         if (Double.class.equals(getValueClass()))
-            return ((Double) getValue()).shortValue();
-
-        if (Byte.class.equals(getValueClass()))
-            return ((Byte) getValue()).shortValue();
-
-        if (Short.class.equals(getValueClass()))
-            return (Short) getValue();
-
-        if (Integer.class.equals(getValueClass()))
-            return ((Integer) getValue()).shortValue();
-
-        if (Long.class.equals(getValueClass()))
-            return ((Long) getValue()).shortValue();
+            return Double.valueOf((Double) getValue());
 
         if (BigDecimal.class.equals(getValueClass()))
-            return ((BigDecimal) getValue()).shortValue();
+            return Double.valueOf(((BigDecimal) getValue()).toString());
+
+        if (Byte.class.equals(getValueClass()))
+            return Double.valueOf((Byte) getValue());
+
+        if (Short.class.equals(getValueClass()))
+            return Double.valueOf((Short) getValue());
+
+        if (Integer.class.equals(getValueClass()))
+            return Double.valueOf((Integer) getValue());
+
+        if (Long.class.equals(getValueClass()))
+            return Double.valueOf((Long) getValue());
 
         throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Short",
+            "Impossible to convert %s to Double",
             getValueClass().getName()));
     }
-
 }

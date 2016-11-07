@@ -8,6 +8,7 @@ package boxfish.commons.web.model;
  * and when Java is entirely wrapped around camelCase.
  * 
  * @author Hudson Mendes
+ * @author Thiago Neves
  *
  */
 class Key {

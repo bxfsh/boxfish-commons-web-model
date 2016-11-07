@@ -28,6 +28,12 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
         if (BigDecimal.class.equals(getValueClass()))
             return (BigDecimal) getValue();
 
+        if (Float.class.equals(getValueClass()))
+            return new BigDecimal(((Float) getValue()).toString());
+
+        if (Double.class.equals(getValueClass()))
+            return new BigDecimal(((Double) getValue()).toString());
+
         if (Byte.class.equals(getValueClass()))
             return BigDecimal.valueOf((Byte) getValue());
 
