@@ -36,6 +36,18 @@ public class ValueToByteTest {
         assertEquals(Byte.valueOf("15"), new ValueToByte(expected).parse());
     }
 
+    @Test
+    public void parse_from_float() throws Exception {
+        final Float expected = new Float("15.19384");
+        assertEquals(Byte.valueOf("15"), new ValueToByte(expected).parse());
+    }
+
+    @Test
+    public void parse_from_double() throws Exception {
+        final Double expected = new Double("15.19384");
+        assertEquals(Byte.valueOf("15"), new ValueToByte(expected).parse());
+    }
+
     @Test(expected = InvalidClassException.class)
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();

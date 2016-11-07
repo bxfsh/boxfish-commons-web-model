@@ -36,6 +36,18 @@ public class ValueToIntegerTest {
         assertEquals(Integer.valueOf("12"), new ValueToInteger(expected).parse());
     }
 
+    @Test
+    public void parse_from_float() throws Exception {
+        final Float expected = Float.valueOf("15.19384");
+        assertEquals(Integer.valueOf("15"), new ValueToInteger(expected).parse());
+    }
+
+    @Test
+    public void parse_from_double() throws Exception {
+        final Double expected = Double.valueOf("15.19384");
+        assertEquals(Integer.valueOf("15"), new ValueToInteger(expected).parse());
+    }
+
     @Test(expected = InvalidClassException.class)
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();
