@@ -1,22 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>com.boxfish</groupId>
     <artifactId>boxfish-commons-web-model</artifactId>
-    <version>1.0.0</version>  
-	
+    <version>1.0.1-SNAPSHOT</version>  
+    <packaging>jar</packaging>
+    
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Open Source auxiliary libraries for building RESTful microservices.</description>
     <url>http://github.com/bxfsh/boxfish-commons-web-model</url>
-	
+    
+    <organization>
+        <name>Boxfish</name>
+        <url>http://www.boxfish.com</url>
+    </organization>
+    
     <licenses>
         <license>
             <name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
         </license>
     </licenses>
-	
+    
     <developers>
         <developer>
             <name>Hudson Mendes</name>
@@ -25,12 +31,13 @@
             <organizationUrl>http://www.boxfish.com</organizationUrl>
         </developer>
     </developers>
-	
+    
     <scm>
         <connection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</connection>
         <developerConnection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
         <url>http://github.com/bxfsh/boxfish-commons-web-model/tree/master/</url>
-    </scm>
+      <tag>boxfish-commons-web-model-1.0.1</tag>
+  </scm>
   
     <distributionManagement>
         <snapshotRepository>
@@ -112,11 +119,5 @@
             </plugin>
         </plugins>
     </build>
-    
-    <packaging>jar</packaging>
-    <organization>
-        <name>Boxfish</name>
-        <url>http://www.boxfish.com</url>
-    </organization>
     
 </project>
