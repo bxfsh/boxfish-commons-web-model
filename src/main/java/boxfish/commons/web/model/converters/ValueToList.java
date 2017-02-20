@@ -1,6 +1,5 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +22,7 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
     }
 
     @Override
-    public List<Value> parse() throws Exception {
+    public List<Value> parse() {
         if (getValue() == null)
             return null;
 
@@ -63,16 +62,32 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
                 .map(v -> new Value(v))
                 .collect(Collectors.toList());
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to List<Value>",
-            getValueClass().getName()));
+        if (String.class.equals(getValueClass()))
+            return stringAsListOf((String) getValue());
+
+        return null;
     }
 
-    @SuppressWarnings("unchecked")
+    private List<Value> stringAsListOf(final String value) {
+        if (value != null) {
+            String[] frags;
+
+            if (value.contains(";"))
+                frags = value.split(";");
+            else if (value.contains(""))
+                frags = value.split(",");
+            else
+                frags = new String[] {value};
+
+            return collectAsList(frags);
+        }
+
+        return null;
+    }
+
     private <TOriginal extends Object> List<Value> collectAsList(final TOriginal[] objects) {
-        final TOriginal[] castedValue = (TOriginal[]) getValue();
         return Arrays
-            .stream(castedValue)
+            .stream(objects)
             .map(v -> new Value(v))
             .collect(Collectors.toList());
     }

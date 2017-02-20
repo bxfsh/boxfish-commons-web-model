@@ -1,13 +1,12 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
  * Sophisticated type conversion and parsing from Object to Short,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -18,7 +17,7 @@ public class ValueToShort extends AbstractValueConverter<Short> {
     }
 
     @Override
-    public Short parse() throws Exception {
+    public Short parse() {
         if (getValue() == null)
             return null;
 
@@ -46,9 +45,7 @@ public class ValueToShort extends AbstractValueConverter<Short> {
         if (BigDecimal.class.equals(getValueClass()))
             return ((BigDecimal) getValue()).shortValue();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Short",
-            getValueClass().getName()));
+        return null;
     }
 
 }
