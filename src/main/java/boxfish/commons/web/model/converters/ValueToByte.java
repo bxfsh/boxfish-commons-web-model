@@ -1,13 +1,12 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
  * Sophisticated type conversion and parsing from Object to Byte,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -18,7 +17,7 @@ public class ValueToByte extends AbstractValueConverter<Byte> {
     }
 
     @Override
-    public Byte parse() throws Exception {
+    public Byte parse() {
         if (getValue() == null)
             return null;
 
@@ -46,9 +45,7 @@ public class ValueToByte extends AbstractValueConverter<Byte> {
         if (Long.class.equals(getValueClass()))
             return ((Long) getValue()).byteValue();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Byte",
-            getValueClass().getName()));
+        return null;
     }
 
 }

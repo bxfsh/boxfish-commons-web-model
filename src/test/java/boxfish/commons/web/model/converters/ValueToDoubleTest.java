@@ -1,8 +1,8 @@
 package boxfish.commons.web.model.converters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -18,10 +18,10 @@ public class ValueToDoubleTest {
         assertEquals(Double.valueOf(expected), new ValueToDouble(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_boolean() throws Exception {
         final Boolean expected = true;
-        new ValueToDouble(expected).parse();
+        assertNull(new ValueToDouble(expected).parse());
     }
 
     @Test
@@ -48,10 +48,10 @@ public class ValueToDoubleTest {
         assertEquals(Double.valueOf("15.19384"), new ValueToDouble(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();
-        new ValueToDouble(expected).parse();
+        assertNull(new ValueToDouble(expected).parse());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ValueToDoubleTest {
         assertEquals(Double.valueOf("123"), new ValueToDouble(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_model() throws Exception {
         final Model expected = new Model()
             .permit("field1", "field2", "field3", "field4")
@@ -80,7 +80,7 @@ public class ValueToDoubleTest {
             .value("field2", Long.valueOf(123481))
             .value("field3", new Model().permit("subField1").value("subField1", 1))
             .value("field4", true);
-        new ValueToDouble(expected).parse();
+        assertNull(new ValueToDouble(expected).parse());
     }
 
 }

@@ -4,7 +4,7 @@ package boxfish.commons.web.model.converters;
  * Sophisticated type conversion and parsing from Object to String,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -15,7 +15,7 @@ public class ValueToString extends AbstractValueConverter<String> {
     }
 
     @Override
-    public String parse() throws Exception {
+    public String parse() {
         if (getValue() == null)
             return null;
 

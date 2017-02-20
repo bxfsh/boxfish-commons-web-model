@@ -1,13 +1,12 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
  * Sophisticated type conversion and parsing from Object to Long,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -18,7 +17,7 @@ public class ValueToLong extends AbstractValueConverter<Long> {
     }
 
     @Override
-    public Long parse() throws Exception {
+    public Long parse() {
         if (getValue() == null)
             return null;
 
@@ -46,9 +45,7 @@ public class ValueToLong extends AbstractValueConverter<Long> {
         if (Long.class.equals(getValueClass()))
             return (Long) getValue();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Long",
-            getValueClass().getName()));
+        return null;
     }
 
 }

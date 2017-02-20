@@ -1,6 +1,5 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -19,7 +18,7 @@ public class ValueToInstant extends AbstractValueConverter<Instant> {
     }
 
     @Override
-    public Instant parse() throws Exception {
+    public Instant parse() {
         if (String.class.equals(getValueClass()))
             return Instant.parse((String) getValue());
 
@@ -47,9 +46,7 @@ public class ValueToInstant extends AbstractValueConverter<Instant> {
         if (Instant.class.equals(getValueClass()))
             return (Instant) getValue();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Instant",
-            getValueClass().getName()));
+        return null;
     }
 
 }
