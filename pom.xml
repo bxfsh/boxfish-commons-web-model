@@ -36,8 +36,8 @@
         <connection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</connection>
         <developerConnection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
         <url>http://github.com/bxfsh/boxfish-commons-web-model/tree/master/</url>
-      <tag>boxfish-commons-web-model-1.0.1</tag>
-  </scm>
+      	<tag>boxfish-commons-web-model-1.0.1</tag>
+  	</scm>
   
     <distributionManagement>
         <snapshotRepository>
@@ -106,6 +106,34 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
             
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>

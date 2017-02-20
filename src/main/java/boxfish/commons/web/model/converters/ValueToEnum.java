@@ -5,6 +5,7 @@ package boxfish.commons.web.model.converters;
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
  *
+ * @param <TEnum> the type of the enumerator that will be used for parsing.
  * @author Hudson Mendes
  *
  */

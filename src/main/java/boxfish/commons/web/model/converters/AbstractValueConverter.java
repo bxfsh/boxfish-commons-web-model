@@ -26,7 +26,6 @@ public abstract class AbstractValueConverter<TValue> {
      * specific TValue in all possible ways.
      * 
      * @return the original value converted or parsed into TValue.
-     * @throws Exception raised when it fails to convert or parse.
      */
     public abstract TValue parse();
 }

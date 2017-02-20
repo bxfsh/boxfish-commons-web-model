@@ -89,6 +89,7 @@ public class Model implements Map<String, Object> {
      *
      * @param field that will be validated
      * @param validatorBuilder the validation rule. Do put lambdas here to use.
+     * @param <TValue> type of the value being validated.
      * @return self
      */
     public <TValue> Model rules(

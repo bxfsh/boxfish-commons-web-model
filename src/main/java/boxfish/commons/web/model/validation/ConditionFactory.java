@@ -22,6 +22,7 @@ public class ConditionFactory {
      * defining the type of value that will be later tested.
      * 
      * @param valueClass the type fo the value that will be later checked.
+     * @param <TValue> The type of the value that will be checked.
      * @return the next state (check) of the condition builder.
      */
     public <TValue extends Object> ConditionCheck<TValue> forType(Class<TValue> valueClass) {
