@@ -1,6 +1,5 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.util.Map;
 
 import boxfish.commons.web.model.Model;
@@ -20,7 +19,7 @@ public class ValueToModel extends AbstractValueConverter<Model> {
     }
 
     @Override
-    public Model parse() throws Exception {
+    public Model parse() {
         if (getValue() == null)
             return null;
 
@@ -30,9 +29,7 @@ public class ValueToModel extends AbstractValueConverter<Model> {
         if (Map.class.equals(getValueClass()))
             return modelFromMap();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Model",
-            getValueClass().getName()));
+        return null;
     }
 
     @SuppressWarnings("unchecked")

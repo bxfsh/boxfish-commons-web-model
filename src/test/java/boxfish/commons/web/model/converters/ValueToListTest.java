@@ -1,8 +1,8 @@
 package boxfish.commons.web.model.converters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -13,67 +13,67 @@ import org.junit.Test;
 import boxfish.commons.web.model.Model;
 
 public class ValueToListTest {
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_string() throws Exception {
         final String expected = "true";
-        new ValueToList(expected).parse();
+        assertEquals(expected, new ValueToList(expected).parse().get(0).asString());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_boolean() throws Exception {
         final Boolean expected = true;
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_byte() throws Exception {
         final byte expected = (byte) 32;
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_decimal() throws Exception {
         final BigDecimal expected = new BigDecimal("12.5793");
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_float() throws Exception {
         final Float expected = new Float("12.5793");
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_double() throws Exception {
         final Double expected = new Double("12.5793");
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_short() throws Exception {
         final Short expected = 79;
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_integer() throws Exception {
         final Integer expected = 38481;
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_long() throws Exception {
         final Long expected = 123l;
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
     }
 
-    @Test(expected = InvalidClassException.class)
+    @Test
     public void parse_from_model() throws Exception {
         final Model expected = new Model()
             .permit("field1", "field2", "field3", "field4")
@@ -81,7 +81,31 @@ public class ValueToListTest {
             .value("field2", Long.valueOf(123481))
             .value("field3", new Model().permit("subField1").value("subField1", 1))
             .value("field4", true);
-        new ValueToList(expected).parse();
+        assertNull(new ValueToList(expected).parse());
+    }
+
+    @Test
+    public void parse_from_joined_with_semicolon_string() throws Exception {
+        final String expected = "item1;item2";
+        assertEquals(2, new ValueToList(expected).parse().size());
+        assertEquals("item1", new ValueToList(expected).parse().get(0).asString());
+        assertEquals("item2", new ValueToList(expected).parse().get(1).asString());
+    }
+
+    @Test
+    public void parse_from_joined_with_coma_string() throws Exception {
+        final String expected = "item1,item2";
+        assertEquals(2, new ValueToList(expected).parse().size());
+        assertEquals("item1", new ValueToList(expected).parse().get(0).asString());
+        assertEquals("item2", new ValueToList(expected).parse().get(1).asString());
+    }
+
+    @Test
+    public void parse_from_joined_with_semicolon_having_coma_items_string() throws Exception {
+        final String expected = "item1,subitem1,subitem2;item2,subitem1";
+        assertEquals(2, new ValueToList(expected).parse().size());
+        assertEquals("item1,subitem1,subitem2", new ValueToList(expected).parse().get(0).asString());
+        assertEquals("item2,subitem1", new ValueToList(expected).parse().get(1).asString());
     }
 
     @Test
