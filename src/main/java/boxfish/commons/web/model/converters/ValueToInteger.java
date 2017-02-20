@@ -1,13 +1,12 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
  * Sophisticated type conversion and parsing from Object to Integer,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -18,7 +17,7 @@ public class ValueToInteger extends AbstractValueConverter<Integer> {
     }
 
     @Override
-    public Integer parse() throws Exception {
+    public Integer parse() {
         if (getValue() == null)
             return null;
 
@@ -46,9 +45,7 @@ public class ValueToInteger extends AbstractValueConverter<Integer> {
         if (Long.class.equals(getValueClass()))
             return ((Long) getValue()).intValue();
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to Integer",
-            getValueClass().getName()));
+        return null;
     }
 
 }

@@ -1,13 +1,12 @@
 package boxfish.commons.web.model.converters;
 
-import java.io.InvalidClassException;
 import java.math.BigDecimal;
 
 /**
  * Sophisticated type conversion and parsing from Object to BigDecimal,
  * which aims to perform any possible casting or parsing in representing
  * the original value as such.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -18,7 +17,7 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
     }
 
     @Override
-    public BigDecimal parse() throws Exception {
+    public BigDecimal parse() {
         if (getValue() == null)
             return null;
 
@@ -46,8 +45,6 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
         if (Long.class.equals(getValueClass()))
             return BigDecimal.valueOf((Long) getValue());
 
-        throw new InvalidClassException(String.format(
-            "Impossible to convert %s to BigDecimal",
-            getValueClass().getName()));
+        return null;
     }
 }
