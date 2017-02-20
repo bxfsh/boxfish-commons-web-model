@@ -36,9 +36,8 @@ public class Value {
      * Presents the value as String.
      *
      * @return a string representing the value
-     * @throws Exception raised if the type conversion fails.
      */
-    public String asString() throws Exception {
+    public String asString() {
         return new ValueToString(value).parse();
     }
 
@@ -47,9 +46,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a long representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Long asLong() throws Exception {
+    public Long asLong() {
         return new ValueToLong(value).parse();
     }
 
@@ -58,9 +56,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return an integer representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Integer asInteger() throws Exception {
+    public Integer asInteger() {
         return new ValueToInteger(value).parse();
     }
 
@@ -69,9 +66,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a short representing the value
-     * @throws Exception raised if the type conversion fails.
      */
-    public Short asShort() throws Exception {
+    public Short asShort() {
         return new ValueToShort(value).parse();
     }
 
@@ -80,9 +76,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a byte representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Byte asByte() throws Exception {
+    public Byte asByte() {
         return new ValueToByte(value).parse();
     }
 
@@ -90,9 +85,8 @@ public class Value {
      * Presents the value as Boolean.
      *
      * @return a boolean representing a value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Boolean asBoolean() throws Exception {
+    public Boolean asBoolean() {
         return new ValueToBoolean(value).parse();
     }
 
@@ -101,9 +95,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a BigDecimal representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public BigDecimal asBigDecimal() throws Exception {
+    public BigDecimal asBigDecimal() {
         return new ValueToBigDecimal(value).parse();
     }
 
@@ -112,9 +105,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a Float representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Float asFloat() throws Exception {
+    public Float asFloat() {
         return new ValueToFloat(value).parse();
     }
 
@@ -123,9 +115,8 @@ public class Value {
      * of Numeric types and numeric Strings.
      *
      * @return a Double representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Double asDouble() throws Exception {
+    public Double asDouble() {
         return new ValueToDouble(value).parse();
     }
 
@@ -133,9 +124,8 @@ public class Value {
      * Presents the value as Instant.
      *
      * @return an Instant representing the value.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Instant asInstant() throws Exception {
+    public Instant asInstant() {
         return new ValueToInstant(value).parse();
     }
 
@@ -145,9 +135,8 @@ public class Value {
      * structures.
      *
      * @return a Model representing the value when it's a complex object.
-     * @throws Exception raised if the type conversion fails.
      */
-    public Model asModel() throws Exception {
+    public Model asModel() {
         return new ValueToModel(value).parse();
     }
 
@@ -155,6 +144,7 @@ public class Value {
      * Presents the value as an item of an Enum.
      *
      * @param enumType the type of the Enum.
+     * @param <TEnum> the type of the enum that will be used as return value.
      * @return the value of the Enum that was parsed from the original value.
      */
     public <TEnum extends Enum<TEnum>> TEnum asEnum(final Class<TEnum> enumType) {
@@ -164,11 +154,9 @@ public class Value {
     /**
      * Presents the value as a List of a particular type.
      *
-     * @param clazz the type of the entry in the list.
-     * @return a List<Value> representing the value.
-     * @throws Exception raised if the type conversion fails.
+     * @return a List of {@link Value} representing the value.
      */
-    public List<Value> asList() throws Exception {
+    public List<Value> asList() {
         return new ValueToList(value).parse();
     }
 
@@ -182,7 +170,7 @@ public class Value {
     }
 
     /**
-     * Presents the Class<?> of the value, or
+     * Presents the Class of ? of the value, or
      * Object.class when the value is null.
      *
      * @return the class of the value.
