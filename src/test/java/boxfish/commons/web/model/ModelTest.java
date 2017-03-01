@@ -38,6 +38,20 @@ public class ModelTest {
     }
 
     @Test
+    public void isAccepted_permitted() {
+        assertFalse(model.isAccepted(FIELD_NAME));
+        model.permit(FIELD_NAME);
+        assertTrue(model.isAccepted(FIELD_NAME));
+    }
+
+    @Test
+    public void isAccepted_required() {
+        assertFalse(model.isAccepted(FIELD_NAME));
+        model.require(FIELD_NAME);
+        assertTrue(model.isAccepted(FIELD_NAME));
+    }
+
+    @Test
     public void permit() throws Exception {
         model.value(FIELD_NAME, FIELD_VALUE);
         assertNull(model.get(FIELD_NAME));
@@ -247,7 +261,7 @@ public class ModelTest {
         model.permit("field2");
         assertEquals(2, model.values().size());
 
-        List<Object> values = model.values().stream().collect(Collectors.toList());
+        final List<Object> values = model.values().stream().collect(Collectors.toList());
         assertEquals(495, values.get(0));
         assertEquals("945725", values.get(1));
     }

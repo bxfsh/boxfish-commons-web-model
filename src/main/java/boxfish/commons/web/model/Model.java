@@ -318,6 +318,16 @@ public class Model implements Map<String, Object> {
         output.append("]");
         return output.toString();
     }
+    
+    /**
+     * Replies if the fieldName is accepted (or required).
+     * @param fieldName the name of the field which is being verified.
+     * @return true in case permit or require mention the field, and false otherwise.
+     */
+    public boolean isAccepted(String fieldName) {
+        return permitteds.contains(key(fieldName))
+                || requireds.contains(key(fieldName));
+    }
 
     private String key(final String field) {
         return new Key(field).build();
