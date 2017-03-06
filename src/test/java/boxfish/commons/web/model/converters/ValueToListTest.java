@@ -109,6 +109,14 @@ public class ValueToListTest {
     }
 
     @Test
+    public void parse_from_json_format_array() throws Exception {
+        final String expected = "[item1,subitem1,subitem2;item2,subitem1]";
+        assertEquals(2, new ValueToList(expected).parse().size());
+        assertEquals("item1,subitem1,subitem2", new ValueToList(expected).parse().get(0).asString());
+        assertEquals("item2,subitem1", new ValueToList(expected).parse().get(1).asString());
+    }
+
+    @Test
     public void parse_from_array_object() throws Exception {
         final Object[] expected = new Object[] {new Object(), new Object()};
         assertEquals(expected.length, new ValueToList(expected).parse().size());

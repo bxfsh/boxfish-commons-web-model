@@ -68,17 +68,17 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
         return null;
     }
 
-    private List<Value> stringAsListOf(final String value) {
+    private List<Value> stringAsListOf(String value) {
         if (value != null) {
-            String[] frags;
+            value = value.trim().replaceAll("^\\[|\\]$", "");
 
+            String[] frags;
             if (value.contains(";"))
                 frags = value.split(";");
             else if (value.contains(""))
                 frags = value.split(",");
             else
                 frags = new String[] {value};
-
             return collectAsList(frags);
         }
 
