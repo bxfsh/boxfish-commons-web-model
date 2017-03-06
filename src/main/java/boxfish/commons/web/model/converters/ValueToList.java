@@ -1,5 +1,7 @@
 package boxfish.commons.web.model.converters;
 
+import static java.util.Arrays.stream;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +81,10 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
                 frags = value.split(",");
             else
                 frags = new String[] {value};
-            return collectAsList(frags);
+
+            return collectAsList(stream(frags)
+                .map(v -> v.trim())
+                .toArray(size -> new String[size]));
         }
 
         return null;
