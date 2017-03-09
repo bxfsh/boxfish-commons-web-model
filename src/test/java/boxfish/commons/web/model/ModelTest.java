@@ -3,6 +3,7 @@ package boxfish.commons.web.model;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -38,6 +39,20 @@ public class ModelTest {
     }
 
     @Test
+    public void isAccepted_permitted() {
+        assertFalse(model.isAccepted(FIELD_NAME));
+        model.permit(FIELD_NAME);
+        assertTrue(model.isAccepted(FIELD_NAME));
+    }
+
+    @Test
+    public void isAccepted_required() {
+        assertFalse(model.isAccepted(FIELD_NAME));
+        model.require(FIELD_NAME);
+        assertTrue(model.isAccepted(FIELD_NAME));
+    }
+
+    @Test
     public void permit() throws Exception {
         model.value(FIELD_NAME, FIELD_VALUE);
         assertNull(model.get(FIELD_NAME));
@@ -45,6 +60,21 @@ public class ModelTest {
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
         assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+    }
+
+    @Test
+    public void baseline() throws Exception {
+        model.baseline(FIELD_NAME, FIELD_VALUE);
+        assertNull(model.get(FIELD_NAME));
+        model.permit(FIELD_NAME);
+        assertNotNull(model.get(FIELD_NAME));
+        assertFalse(model.get(FIELD_NAME).isNull());
+        assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+
+        BigDecimal overlappingValue = FIELD_VALUE.add(BigDecimal.ONE);
+        model.value(FIELD_NAME, overlappingValue);
+        assertNotEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+        assertEquals(overlappingValue, model.get(FIELD_NAME).asBigDecimal());
     }
 
     @Test
@@ -247,7 +277,7 @@ public class ModelTest {
         model.permit("field2");
         assertEquals(2, model.values().size());
 
-        List<Object> values = model.values().stream().collect(Collectors.toList());
+        final List<Object> values = model.values().stream().collect(Collectors.toList());
         assertEquals(495, values.get(0));
         assertEquals("945725", values.get(1));
     }
