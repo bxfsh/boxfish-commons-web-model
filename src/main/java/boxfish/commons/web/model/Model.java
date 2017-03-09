@@ -42,6 +42,7 @@ public class Model implements Map<String, Object> {
     private final List<String> permitteds = new ArrayList<>();
     private final List<String> requireds = new ArrayList<>();
     private final Map<String, Object> data = new LinkedHashMap<>();
+    private final Map<String, Object> baseline = new LinkedHashMap<>();
     private final Map<String, List<Validator>> rules = new ConcurrentHashMap<>();
 
     /**
@@ -120,6 +121,20 @@ public class Model implements Map<String, Object> {
     }
 
     /**
+     * Sets the DEFAULT VALUE for a particular field.
+     * This value is returned if no value is found.
+     *
+     * @param field the field you are setting the value to.
+     * @param value the default value of the field that it will assume in case no value has been defined.
+     * @return self
+     */
+    public Model baseline(final String field, final Object value) {
+        final String treated = key(field);
+        baseline.put(treated, value);
+        return this;
+    }
+
+    /**
      * True if there is no model errors. False otherwise.
      * If any of the rules throw an error, it will return false.
      *
@@ -141,15 +156,22 @@ public class Model implements Map<String, Object> {
 
     /**
      * If permitted, returned a wrapped Value.
+     * In case a value is not found for the field and a baseline value is found,
+     * we return the baseline value as the value.
      *
      * @param field the field you want to retrieve.
      * @return the wrapped Value.
      */
     public Value get(final String field) {
         final String treated = key(field);
-        if (!permitteds.contains(treated))
-            return null;
-        return new Value(data.get(treated));
+        if (permitteds.contains(treated)) {
+            if (data.containsKey(treated))
+                return new Value(data.get(treated));
+            else if (baseline.containsKey(treated))
+                return new Value(baseline.get(treated));
+        }
+
+        return null;
     }
 
     /**
@@ -318,15 +340,16 @@ public class Model implements Map<String, Object> {
         output.append("]");
         return output.toString();
     }
-    
+
     /**
      * Replies if the fieldName is accepted (or required).
+     *
      * @param fieldName the name of the field which is being verified.
      * @return true in case permit or require mention the field, and false otherwise.
      */
-    public boolean isAccepted(String fieldName) {
+    public boolean isAccepted(final String fieldName) {
         return permitteds.contains(key(fieldName))
-                || requireds.contains(key(fieldName));
+               || requireds.contains(key(fieldName));
     }
 
     private String key(final String field) {

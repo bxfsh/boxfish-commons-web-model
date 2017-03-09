@@ -3,6 +3,7 @@ package boxfish.commons.web.model;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -59,6 +60,21 @@ public class ModelTest {
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
         assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+    }
+
+    @Test
+    public void baseline() throws Exception {
+        model.baseline(FIELD_NAME, FIELD_VALUE);
+        assertNull(model.get(FIELD_NAME));
+        model.permit(FIELD_NAME);
+        assertNotNull(model.get(FIELD_NAME));
+        assertFalse(model.get(FIELD_NAME).isNull());
+        assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+
+        BigDecimal overlappingValue = FIELD_VALUE.add(BigDecimal.ONE);
+        model.value(FIELD_NAME, overlappingValue);
+        assertNotEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+        assertEquals(overlappingValue, model.get(FIELD_NAME).asBigDecimal());
     }
 
     @Test
