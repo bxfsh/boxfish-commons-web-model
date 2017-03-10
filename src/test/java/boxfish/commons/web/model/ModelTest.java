@@ -1,6 +1,8 @@
 package boxfish.commons.web.model;
 
 import static java.math.BigDecimal.ZERO;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -10,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +42,21 @@ public class ModelTest {
     }
 
     @Test
+    public void from() {
+        final Map<String, Object> input = new LinkedHashMap<>();
+        final String field1Value = "whatever data";
+        final BigDecimal field2Value = BigDecimal.valueOf(23);
+        input.put("field1", field1Value);
+        input.put("field2", field2Value);
+
+        final Model actual = Model.from(input).permit("field_1", "field2");
+        assertNotNull(actual);
+        assertEquals(2, actual.size());
+        assertEquals(field1Value, actual.get("field_1").asString());
+        assertEquals(field2Value, actual.get("field_2").asBigDecimal());
+    }
+
+    @Test
     public void isAccepted_permitted() {
         assertFalse(model.isAccepted(FIELD_NAME));
         model.permit(FIELD_NAME);
@@ -55,7 +73,8 @@ public class ModelTest {
     @Test
     public void permit() throws Exception {
         model.value(FIELD_NAME, FIELD_VALUE);
-        assertNull(model.get(FIELD_NAME));
+        assertNotNull(model.get(FIELD_NAME));
+        assertTrue(model.get(FIELD_NAME).isNull());
         model.permit(FIELD_NAME);
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
@@ -63,15 +82,70 @@ public class ModelTest {
     }
 
     @Test
+    public void permit_subField() throws Exception {
+        final BigDecimal subFieldValue = BigDecimal.valueOf(13481348);
+
+        model.value("field1", Model.create().value("subField1", subFieldValue));
+        assertFalse(model.has("field_1"));
+        assertFalse(model.hasNonBlank("field_1"));
+        assertTrue(model.get("field_1").isNull());
+
+        model.permit("field1");
+        assertTrue(model.has("field_1"));
+        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.get("field_1").isNull());
+
+        model.permit("field1.sub_field_1");
+        assertTrue(model.has("field_1"));
+        assertTrue(model.hasNonBlank("field_1"));
+        assertFalse(model.get("field_1").isNull());
+        assertEquals(subFieldValue, model.get("field_1").asModel().get("sub_field_1").asBigDecimal());
+    }
+
+    @Test
+    public void require() throws Exception {
+        model.require(FIELD_NAME);
+        assertFalse(model.isValid());
+
+        model.value(FIELD_NAME, FIELD_VALUE);
+        assertTrue(model.isValid());
+        assertNotNull(model.get(FIELD_NAME));
+        assertFalse(model.get(FIELD_NAME).isNull());
+        assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
+    }
+
+    @Test
+    public void require_subField() throws Exception {
+        final BigDecimal subFieldValue = BigDecimal.valueOf(13481348);
+
+        model.require(FIELD_NAME);
+        assertFalse(model.isValid());
+
+        model.value(FIELD_NAME, FIELD_VALUE);
+        assertTrue(model.isValid());
+        assertNotNull(model.get(FIELD_NAME));
+        assertFalse(model.get(FIELD_NAME).isNull());
+        model.value("field1", Model.create().value("subField1", subFieldValue));
+
+        model.require("field1.sub_field_1");
+        assertTrue(model.has("field_1"));
+        assertTrue(model.hasNonBlank("field_1"));
+        assertFalse(model.get("field_1").isNull());
+        assertEquals(subFieldValue, model.get("field_1").asModel().get("sub_field_1").asBigDecimal());
+        assertTrue(model.isValid());
+    }
+
+    @Test
     public void baseline() throws Exception {
         model.baseline(FIELD_NAME, FIELD_VALUE);
-        assertNull(model.get(FIELD_NAME));
+        assertNotNull(model.get(FIELD_NAME));
+        assertTrue(model.get(FIELD_NAME).isNull());
         model.permit(FIELD_NAME);
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
         assertEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
 
-        BigDecimal overlappingValue = FIELD_VALUE.add(BigDecimal.ONE);
+        final BigDecimal overlappingValue = FIELD_VALUE.add(BigDecimal.ONE);
         model.value(FIELD_NAME, overlappingValue);
         assertNotEquals(FIELD_VALUE, model.get(FIELD_NAME).asBigDecimal());
         assertEquals(overlappingValue, model.get(FIELD_NAME).asBigDecimal());
@@ -96,6 +170,19 @@ public class ModelTest {
                 .warnWith("The 'fieldName' must be smaller than ZERO"));
         assertFalse(model.isValid());
         model.value(FIELD_NAME, -1);
+        assertTrue(model.isValid());
+    }
+
+    @Test
+    public void isValid_rulesOnEachChildOf() {
+        model.value(FIELD_NAME, asList(FIELD_VALUE, FIELD_VALUE, FIELD_VALUE));
+        model.rulesOnEachChildOf(
+            FIELD_NAME,
+            condition -> condition
+                .ifValueFailsOn((all, v) -> v.asBigDecimal().compareTo(ZERO) < 0)
+                .warnWith("The 'fieldName' must be smaller than ZERO"));
+        assertFalse(model.isValid());
+        model.value(FIELD_NAME, asList(-1));
         assertTrue(model.isValid());
     }
 
@@ -174,6 +261,13 @@ public class ModelTest {
     }
 
     @Test
+    public void get_notFound() throws Exception {
+        model.permit("field___2").value("field2", "4i5n245345");
+        assertNotNull(model.get("field3"));
+        assertNull(model.get("field3").asString());
+    }
+
+    @Test
     public void clear() {
         model.permit("field1").value("field1", 495);
         assertEquals(1, model.entrySet().size());
@@ -188,8 +282,49 @@ public class ModelTest {
 
     @Test
     public void containsKey() {
+        assertFalse(model.containsKey("field_1"));
         model.permit("field_1").value("field1", "4i5n245345");
         assertTrue(model.containsKey("field_1"));
+    }
+
+    @Test
+    public void has() {
+        assertFalse(model.has("field_1"));
+        model.permit("field_1").value("field1", "4i5n245345");
+        assertTrue(model.has("field_1"));
+    }
+
+    @Test
+    public void hasNonBlank_string() {
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", null);
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", "       ");
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", "4i5n245345");
+        assertTrue(model.hasNonBlank("field_1"));
+    }
+
+    @Test
+    public void hasNonBlank_model() {
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", null);
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", Model.create());
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", Model.create().permit("sub_field_1").value("sub_field_1", "438y54u31h5"));
+        assertTrue(model.hasNonBlank("field_1"));
+    }
+
+    @Test
+    public void hasNonBlank_list() {
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", null);
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", emptyList());
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", asList("45y24b5245hh45j4"));
+        assertTrue(model.hasNonBlank("field_1"));
     }
 
     @Test
