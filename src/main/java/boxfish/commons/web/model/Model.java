@@ -1,5 +1,8 @@
 package boxfish.commons.web.model;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,10 +13,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import boxfish.commons.web.model.converters.ValueToModel;
+import boxfish.commons.web.model.validation.ConditionCheck;
 import boxfish.commons.web.model.validation.ConditionFactory;
 import boxfish.commons.web.model.validation.ModelErrors;
 import boxfish.commons.web.model.validation.ModelValidator;
 import boxfish.commons.web.model.validation.ValidationListener;
+import boxfish.commons.web.model.validation.ValidationOfChildListener;
 import boxfish.commons.web.model.validation.Validator;
 
 /**
@@ -30,6 +36,8 @@ import boxfish.commons.web.model.validation.Validator;
  */
 public class Model implements Map<String, Object> {
 
+    private static final String FIELD_LEVEL_SEPARATOR = "\\.";
+
     /**
      * Inline creates a new instance of Model.
      *
@@ -39,11 +47,25 @@ public class Model implements Map<String, Object> {
         return new Model();
     }
 
+    /**
+     * Inline creates a new instance of model and
+     * populates it with the data received from any compatible map.
+     *
+     * @param input the map that will be loaded.
+     * @return the model created.
+     */
+    public static Model from(final Map<String, Object> input) {
+        final Model created = create();
+        created.putAll(input);
+        return created;
+    }
+
     private final List<String> permitteds = new ArrayList<>();
     private final List<String> requireds = new ArrayList<>();
     private final Map<String, Object> data = new LinkedHashMap<>();
     private final Map<String, Object> baseline = new LinkedHashMap<>();
     private final Map<String, List<Validator>> rules = new ConcurrentHashMap<>();
+    private final Map<String, List<Validator>> childreenRules = new ConcurrentHashMap<>();
 
     /**
      * Permit a field_name to ever be retrieved.
@@ -56,9 +78,28 @@ public class Model implements Map<String, Object> {
     public Model permit(final String... fields) {
         if (fields != null && fields.length != 0)
             for (final String field : fields) {
-                final String treated = key(field);
-                if (!permitteds.contains(treated))
-                    permitteds.add(treated);
+                final List<String> fieldAndSubFields = asList(field.split(FIELD_LEVEL_SEPARATOR));
+
+                if (!fieldAndSubFields.isEmpty()) {
+                    final String fieldOfThisLevel = fieldAndSubFields.get(0);
+
+                    final String treated = key(fieldOfThisLevel);
+                    if (!permitteds.contains(treated))
+                        permitteds.add(treated);
+
+                    if (fieldAndSubFields.size() > 1) {
+                        final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
+                        Value nextLevelValue = get(fieldOfThisLevel);
+                        if (nextLevelValue.isNull()) {
+                            nextLevelValue = new Value(Model.create());
+                            value(fieldOfThisLevel, nextLevelValue);
+                        }
+
+                        final Model nextLevelModel = nextLevelValue.asModel();
+                        if (nextLevelModel != null)
+                            nextLevelModel.permit(fieldOfDownwardLevels);
+                    }
+                }
             }
         return this;
     }
@@ -74,11 +115,30 @@ public class Model implements Map<String, Object> {
     public Model require(final String... fields) {
         if (fields != null && fields.length != 0)
             for (final String field : fields) {
-                permit(field);
+                final List<String> fieldAndSubFields = asList(field.split(FIELD_LEVEL_SEPARATOR));
 
-                final String treated = key(field);
-                if (!requireds.contains(treated))
-                    requireds.add(treated);
+                if (!fieldAndSubFields.isEmpty()) {
+                    final String fieldOfThisLevel = fieldAndSubFields.get(0);
+
+                    final String treated = key(fieldOfThisLevel);
+                    if (!requireds.contains(treated)) {
+                        requireds.add(treated);
+                        permitteds.add(treated);
+                    }
+
+                    if (fieldAndSubFields.size() > 1) {
+                        final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
+                        Value nextLevelValue = get(fieldOfThisLevel);
+                        if (nextLevelValue.isNull()) {
+                            nextLevelValue = new Value(Model.create());
+                            value(fieldOfThisLevel, nextLevelValue);
+                        }
+
+                        final Model nextLevelModel = nextLevelValue.asModel();
+                        if (nextLevelModel != null)
+                            nextLevelModel.require(fieldOfDownwardLevels);
+                    }
+                }
             }
         return this;
     }
@@ -99,6 +159,26 @@ public class Model implements Map<String, Object> {
         final ConditionFactory condition = new ConditionFactory(this);
         final Validator validator = validatorBuilder.produce(condition);
         rules.merge(
+            key(field),
+            new ArrayList<>(Arrays.asList(validator)),
+            (p, c) -> {
+                p.addAll(c);
+                return p;
+            });
+        return permit(field);
+    }
+
+    /**
+     * Defines validation rules used on each child of a list value.
+     *
+     * @param field the name of the list field.
+     * @param validatorBuilder
+     * @return
+     */
+    public Model rulesOnEachChildOf(final String field, final ValidationOfChildListener validatorBuilder) {
+        final ConditionCheck<Value> condition = new ConditionFactory(this).forType(Value.class);
+        final Validator validator = validatorBuilder.produce(condition);
+        childreenRules.merge(
             key(field),
             new ArrayList<>(Arrays.asList(validator)),
             (p, c) -> {
@@ -141,7 +221,7 @@ public class Model implements Map<String, Object> {
      * @return the validation state.
      */
     public Boolean isValid() {
-        return new ModelValidator(this, requireds, rules).isValid();
+        return new ModelValidator(this, requireds, rules, childreenRules).isValid();
     }
 
     /**
@@ -151,7 +231,7 @@ public class Model implements Map<String, Object> {
      * @throws Exception in case any of the rules throw an error.
      */
     public ModelErrors errors() throws Exception {
-        return new ModelValidator(this, requireds, rules).validate();
+        return new ModelValidator(this, requireds, rules, childreenRules).validate();
     }
 
     /**
@@ -164,14 +244,13 @@ public class Model implements Map<String, Object> {
      */
     public Value get(final String field) {
         final String treated = key(field);
-        if (permitteds.contains(treated)) {
+        if (permitteds.contains(treated))
             if (data.containsKey(treated))
                 return new Value(data.get(treated));
             else if (baseline.containsKey(treated))
                 return new Value(baseline.get(treated));
-        }
 
-        return null;
+        return new Value(null);
     }
 
     /**
@@ -184,6 +263,8 @@ public class Model implements Map<String, Object> {
 
     /**
      * Returns true in case the _permitted_ value is contained in the map.
+     *
+     * @param key the key which will be treated and searched for.
      */
     @Override
     public boolean containsKey(final Object key) {
@@ -192,6 +273,39 @@ public class Model implements Map<String, Object> {
             return false;
 
         return data.containsKey(treated) && data.get(treated) != null;
+    }
+
+    /**
+     * Alias for 'containsKey'
+     *
+     * @param key the key which will be treated and searched for.
+     */
+    public boolean has(final String key) {
+        return containsKey(key);
+    }
+
+    /**
+     * Check if the field contains value, if it is not null and, in case of string,
+     * if it is not empty.
+     *
+     * @param key the key which will be treated and searched for.
+     */
+    public boolean hasNonBlank(final String key) {
+        if (!has(key))
+            return false;
+
+        final Value value = get(key);
+        if (value.isNull())
+            return false;
+
+        if (String.class.equals(value.getValueClass()))
+            return !value.asString().trim().equals("");
+
+        final List<Value> valueAsList = value.asList();
+        if (valueAsList != null)
+            return !valueAsList.isEmpty();
+
+        return !value.asModel().isEmpty();
     }
 
     /**
@@ -259,7 +373,20 @@ public class Model implements Map<String, Object> {
      */
     @Override
     public Object put(final String key, final Object value) {
-        return data.put(key(key), value);
+        return data.put(key(key), sanitizeMap(value));
+    }
+
+    /**
+     * Ensures that Value put follows the desired constraints.
+     *
+     * @param value the value beign put
+     * @return the value put;
+     */
+    private Object sanitizeMap(final Object value) {
+        if (value != null)
+            if (Map.class.isAssignableFrom(value.getClass()) && !Model.class.equals(value.getClass()))
+                return ValueToModel.newModelFromMap((Map<?, ?>) value);
+        return value;
     }
 
     /**
@@ -355,4 +482,5 @@ public class Model implements Map<String, Object> {
     private String key(final String field) {
         return new Key(field).build();
     }
+
 }
