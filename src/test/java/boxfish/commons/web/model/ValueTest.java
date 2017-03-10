@@ -11,7 +11,6 @@ import java.time.Instant;
 import org.junit.Test;
 
 public class ValueTest {
-
     @Test
     public void asString() throws Exception {
         final String expected = "text";

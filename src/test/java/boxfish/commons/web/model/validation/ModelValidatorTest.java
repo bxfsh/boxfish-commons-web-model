@@ -23,6 +23,7 @@ public class ModelValidatorTest {
     private Value value;
     private List<String> requireds;
     private Map<String, List<Validator>> rules;
+    private Map<String, List<Validator>> childreenRules;
     private ModelValidator validator;
 
     @Before
@@ -38,13 +39,13 @@ public class ModelValidatorTest {
         final String field = "field_name";
 
         requireds.add(field);
-        validator = new ModelValidator(model, requireds, rules);
+        validator = new ModelValidator(model, requireds, rules, childreenRules);
         assertFalse(validator.isValid());
 
         when(value.asOriginal()).thenReturn(35);
         when(model.containsKey(field)).thenReturn(true);
         when(model.get(field)).thenReturn(value);
-        validator = new ModelValidator(model, requireds, rules);
+        validator = new ModelValidator(model, requireds, rules, childreenRules);
         assertTrue(validator.isValid());
     }
 
@@ -53,14 +54,14 @@ public class ModelValidatorTest {
         final String field = "field_name";
 
         requireds.add(field);
-        validator = new ModelValidator(model, requireds, rules);
+        validator = new ModelValidator(model, requireds, rules, childreenRules);
         ModelErrors errors = validator.validate();
         assertEquals(1, errors.size().intValue());
 
         when(value.asOriginal()).thenReturn(35);
         when(model.containsKey(field)).thenReturn(true);
         when(model.get(field)).thenReturn(value);
-        validator = new ModelValidator(model, requireds, rules);
+        validator = new ModelValidator(model, requireds, rules, childreenRules);
         errors = validator.validate();
         assertEquals(0, errors.size().intValue());
     }
