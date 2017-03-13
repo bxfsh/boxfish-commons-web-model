@@ -1,5 +1,7 @@
 package boxfish.commons.web.model.validation;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,7 @@ import boxfish.commons.web.model.Value;
  * This class is completely stateless and can only be used against
  * a snapshot of model, requiring to be recreated whenever a new
  * check is going to be performed.
- * 
+ *
  * @author Hudson Mendes
  *
  */
@@ -24,11 +26,13 @@ public class ModelValidator {
     private final Model hashModel;
     private final List<String> requireds = new ArrayList<>();
     private final Map<String, List<Validator>> rules = new HashMap<>();
+    private final Map<String, List<Validator>> childreenRules = new HashMap<>();
 
     public ModelValidator(
             final Model hashModel,
             final List<String> requireds,
-            final Map<String, List<Validator>> validators) {
+            final Map<String, List<Validator>> validators,
+            final Map<String, List<Validator>> childreenRules) {
 
         if (hashModel == null)
             throw new IllegalArgumentException("'hashModel' can't be null.");
@@ -40,12 +44,15 @@ public class ModelValidator {
 
         if (validators != null && !validators.isEmpty())
             rules.putAll(validators);
+
+        if (childreenRules != null && !childreenRules.isEmpty())
+            this.childreenRules.putAll(childreenRules);
     }
 
     /**
      * Checks and returns if the model is valid
      * against the rules or not.
-     * 
+     *
      * @return false if there are errors; true otherwise.
      */
     public Boolean isValid() {
@@ -66,7 +73,7 @@ public class ModelValidator {
      * Checks and retrieves the list of model errors
      * occurred when validated against the requirements
      * and against the rules.
-     * 
+     *
      * @return the collection of errors.
      * @throws Exception in case the validation fails to run rules.
      */
@@ -77,14 +84,45 @@ public class ModelValidator {
                 errors.addError(required, String.format(REQUIRED_MESSAGE, required));
 
         for (final String ruleField : rules.keySet())
-            if (hashModel.containsKey(ruleField)) {
-                final Value value = hashModel.get(ruleField);
-                for (final Validator rule : rules.get(ruleField))
-                    if (rule.accepts(value.getValueClass()))
-                        if (!rule.isValid(value.asOriginal()))
-                            errors.addError(ruleField, rule.errorMessage());
-            }
+            validationRules(errors, ruleField, rules);
+
+        for (final String ruleField : childreenRules.keySet())
+            validationRulesOnChildreenOf(errors, ruleField, childreenRules);
 
         return errors;
+    }
+
+    private void validationRules(
+            final ModelErrors errors,
+            final String ruleField,
+            final Map<String, List<Validator>> validators) {
+        if (hashModel.containsKey(ruleField)) {
+            final Value value = hashModel.get(ruleField);
+
+            for (final Validator validator : validators.get(ruleField))
+                if (validator.accepts(value.getValueClass()))
+                    if (!validator.isValid(value.asOriginal()))
+                        errors.addError(ruleField, validator.errorMessage());
+        }
+    }
+
+    private void validationRulesOnChildreenOf(
+            final ModelErrors errors,
+            final String ruleField,
+            final Map<String, List<Validator>> validators) {
+        if (hashModel.containsKey(ruleField)) {
+            final Value value = hashModel.get(ruleField);
+            final List<Value> childreen = value.asList();
+            if (childreen != null) {
+                for (final Value childValue : childreen)
+                    for (final Validator validator : validators.get(ruleField))
+                        if (!validator.isValid(childValue))
+                            errors.addError(ruleField, validator.errorMessage());
+            }
+            else
+                errors.addError(
+                    ruleField,
+                    format("The field '%s' was expected to be a list, there are rules to be applied to its childreen, but it was not a list."));
+        }
     }
 }
