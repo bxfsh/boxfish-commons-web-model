@@ -305,7 +305,10 @@ public class Model implements Map<String, Object> {
         if (valueAsList != null)
             return !valueAsList.isEmpty();
 
-        return !value.asModel().isEmpty();
+        if (Model.class.equals(value.getValueClass()))
+            return !value.asModel().isEmpty();
+
+        return value != null;
     }
 
     /**
