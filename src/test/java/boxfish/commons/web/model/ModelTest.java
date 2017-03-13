@@ -328,6 +328,15 @@ public class ModelTest {
     }
 
     @Test
+    public void hasNonBlank_decimal() {
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", null);
+        assertFalse(model.hasNonBlank("field_1"));
+        model.permit("field_1").value("field1", BigDecimal.valueOf(1349.134));
+        assertTrue(model.hasNonBlank("field_1"));
+    }
+
+    @Test
     public void entrySet() {
         assertEquals(0, model.entrySet().size());
         model.value("field1", "4i5n245345");
