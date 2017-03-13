@@ -16,4 +16,5 @@ after_success:
           </server>
         </servers>
     </settings>' > ~/.m2/settings_boxfish-commons-web-model.xml
+  - cat ~/.m2/settings_boxfish-commons-web-model.xml
   - mvn clean deploy --settings ~/.m2/settings_boxfish-commons-web-model.xml
