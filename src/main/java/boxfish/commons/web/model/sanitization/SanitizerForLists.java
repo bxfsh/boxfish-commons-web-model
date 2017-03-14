@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 @SuppressWarnings("rawtypes")
 class SanitizerForLists extends SanitizerFor<List, List> {
@@ -30,7 +30,7 @@ class SanitizerForLists extends SanitizerFor<List, List> {
         if (item != null) {
             final Class<?> itemClass = item.getClass();
             final boolean isAKindOfMap = Map.class.isAssignableFrom(itemClass);
-            final boolean isOurModelType = Model.class.equals(itemClass);
+            final boolean isOurModelType = RestModel.class.equals(itemClass);
             return isAKindOfMap && !isOurModelType;
         }
         return false;

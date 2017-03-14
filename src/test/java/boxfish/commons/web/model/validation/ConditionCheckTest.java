@@ -10,16 +10,16 @@ import java.util.function.BiFunction;
 import org.junit.Before;
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class ConditionCheckTest {
 
-    private Model model;
+    private RestModel model;
     private ConditionCheck<Instant> condition;
 
     @Before
     public void setup() {
-        model = mock(Model.class);
+        model = mock(RestModel.class);
         condition = new ConditionCheck<>(model, Instant.class);
     }
 
@@ -35,7 +35,7 @@ public class ConditionCheckTest {
 
     @Test
     public void failsOn() {
-        final BiFunction<Model, Instant, Boolean> test = (all, v) -> false;
+        final BiFunction<RestModel, Instant, Boolean> test = (all, v) -> false;
         final ConditionWarn<Instant> actual = condition.ifValueFailsOn(test);
         assertNotNull(actual);
         assertEquals(model, actual.getHashModel());
