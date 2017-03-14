@@ -112,7 +112,7 @@ public class ValueToModelTest {
             actual.get("field_3").asModel().get("sub_field_1").asInteger());
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void parse_from_map() throws Exception {
         final Map<String, Object> subMap = new LinkedHashMap<>();
         subMap.put("subField1", 1);
@@ -123,7 +123,7 @@ public class ValueToModelTest {
         expected.put("field3", subMap);
         expected.put("field4", true);
 
-        final Model actual = new ValueToModel(expected)
+        new ValueToModel(expected)
             .parse()
             .permit(
                 "field_1",
@@ -131,16 +131,5 @@ public class ValueToModelTest {
                 "field_3",
                 "field3.subField1",
                 "field4");
-
-        assertEquals(expected.get("field1"), actual.get("field_1").asString());
-        assertEquals(expected.get("field2"), actual.get("field_2").asLong());
-        assertEquals(expected.get("field4"), actual.get("field4").asBoolean());
-        assertEquals(
-            subMap.get("subField1"),
-            actual
-                .get("field_3")
-                .asModel()
-                .get("sub_field_1")
-                .asInteger());
     }
 }
