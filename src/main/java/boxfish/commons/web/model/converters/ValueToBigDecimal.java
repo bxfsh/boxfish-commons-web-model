@@ -21,6 +21,14 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
         if (getValue() == null)
             return null;
 
+        BigDecimal decimal = makeBigDecimal();
+        if (decimal != null)
+            return decimal.stripTrailingZeros();
+        else
+            return null;
+    }
+
+    private BigDecimal makeBigDecimal() {
         if (String.class.equals(getValueClass()))
             return new BigDecimal((String) getValue());
 
