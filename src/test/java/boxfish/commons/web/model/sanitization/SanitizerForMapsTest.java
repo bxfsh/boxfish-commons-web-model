@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class SanitizerForMapsTest {
 
@@ -29,9 +29,9 @@ public class SanitizerForMapsTest {
 
         Object actual = new SanitizerForMaps(expected).sanitize();
         assertNotEquals(expected, actual);
-        assertThat(actual, instanceOf(Model.class));
+        assertThat(actual, instanceOf(RestModel.class));
 
-        final Model parsed = (Model) actual;
+        final RestModel parsed = (RestModel) actual;
         parsed.permit("field_1", "field_2", "field_3");
         assertEquals(expected.get("field1"), parsed.get("field_1").asString());
         assertEquals(expected.get("field2"), parsed.get("field_2").asBigDecimal());
@@ -97,7 +97,7 @@ public class SanitizerForMapsTest {
 
     @Test
     public void sanitize_model() {
-        final Model expected = Model.create();
+        final RestModel expected = RestModel.restModel();
         assertEquals(expected, new SanitizerForMaps(expected).sanitize());
     }
 

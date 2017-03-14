@@ -14,13 +14,13 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
-import boxfish.commons.web.model.Value;
+import boxfish.commons.web.model.RestModel;
+import boxfish.commons.web.model.RestValue;
 
 public class ModelValidatorTest {
 
-    private Model model;
-    private Value value;
+    private RestModel model;
+    private RestValue value;
     private List<String> requireds;
     private Map<String, List<Validator>> rules;
     private Map<String, List<Validator>> childreenRules;
@@ -28,8 +28,8 @@ public class ModelValidatorTest {
 
     @Before
     public void setup() {
-        model = mock(Model.class);
-        value = mock(Value.class);
+        model = mock(RestModel.class);
+        value = mock(RestValue.class);
         requireds = new ArrayList<>();
         rules = new HashMap<>();
     }

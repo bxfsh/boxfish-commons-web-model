@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import boxfish.commons.web.model.Model;
-import boxfish.commons.web.model.Value;
+import boxfish.commons.web.model.RestModel;
+import boxfish.commons.web.model.RestValue;
 
 /**
  * The logic that validates models using requirements and rules.
@@ -23,13 +23,13 @@ import boxfish.commons.web.model.Value;
 public class ModelValidator {
     private static final String REQUIRED_MESSAGE = "The '%s' is required";
 
-    private final Model hashModel;
+    private final RestModel hashModel;
     private final List<String> requireds = new ArrayList<>();
     private final Map<String, List<Validator>> rules = new HashMap<>();
     private final Map<String, List<Validator>> childreenRules = new HashMap<>();
 
     public ModelValidator(
-            final Model hashModel,
+            final RestModel hashModel,
             final List<String> requireds,
             final Map<String, List<Validator>> validators,
             final Map<String, List<Validator>> childreenRules) {
@@ -97,7 +97,7 @@ public class ModelValidator {
             final String ruleField,
             final Map<String, List<Validator>> validators) {
         if (hashModel.containsKey(ruleField)) {
-            final Value value = hashModel.get(ruleField);
+            final RestValue value = hashModel.get(ruleField);
 
             for (final Validator validator : validators.get(ruleField))
                 if (validator.accepts(value.getValueClass()))
@@ -111,10 +111,10 @@ public class ModelValidator {
             final String ruleField,
             final Map<String, List<Validator>> validators) {
         if (hashModel.containsKey(ruleField)) {
-            final Value value = hashModel.get(ruleField);
-            final List<Value> childreen = value.asList();
+            final RestValue value = hashModel.get(ruleField);
+            final List<RestValue> childreen = value.asList();
             if (childreen != null) {
-                for (final Value childValue : childreen)
+                for (final RestValue childValue : childreen)
                     for (final Validator validator : validators.get(ruleField))
                         if (!validator.isValid(childValue))
                             errors.addError(ruleField, validator.errorMessage());

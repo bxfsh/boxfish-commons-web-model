@@ -24,19 +24,19 @@ import boxfish.commons.web.model.validation.ModelError;
 import boxfish.commons.web.model.validation.ModelErrors;
 import boxfish.commons.web.model.validation.ValidationListener;
 
-public class ModelTest {
+public class RestModelTest {
     private static final String FIELD_NAME = "fieldName";
     private static final BigDecimal FIELD_VALUE = new BigDecimal("9405249.592");
-    private Model model;
+    private RestModel model;
 
     @Before
     public void setup() {
-        model = new Model();
+        model = new RestModel();
     }
 
     @Test
     public void newModel() {
-        final Model actual = Model.create();
+        final RestModel actual = RestModel.restModel();
         assertNotNull(actual);
         assertEquals(0, actual.size());
     }
@@ -49,7 +49,7 @@ public class ModelTest {
         input.put("field1", field1Value);
         input.put("field2", field2Value);
 
-        final Model actual = Model.from(input).permit("field_1", "field2");
+        final RestModel actual = RestModel.restModelFrom(input).permit("field_1", "field2");
         assertNotNull(actual);
         assertEquals(2, actual.size());
         assertEquals(field1Value, actual.get("field_1").asString());
@@ -85,19 +85,19 @@ public class ModelTest {
     public void permit_subField() throws Exception {
         final BigDecimal subFieldValue = BigDecimal.valueOf(13481348);
 
-        model.value("field1", Model.create().value("subField1", subFieldValue));
+        model.value("field1", RestModel.restModel().value("subField1", subFieldValue));
+        assertFalse(model.has("field_1", true));
         assertFalse(model.has("field_1"));
-        assertFalse(model.hasNonBlank("field_1"));
         assertTrue(model.get("field_1").isNull());
 
         model.permit("field1");
-        assertTrue(model.has("field_1"));
-        assertFalse(model.hasNonBlank("field_1"));
+        assertTrue(model.has("field_1", true));
+        assertFalse(model.has("field_1"));
         assertFalse(model.get("field_1").isNull());
 
         model.permit("field1.sub_field_1");
+        assertTrue(model.has("field_1", true));
         assertTrue(model.has("field_1"));
-        assertTrue(model.hasNonBlank("field_1"));
         assertFalse(model.get("field_1").isNull());
         assertEquals(subFieldValue, model.get("field_1").asModel().get("sub_field_1").asBigDecimal());
     }
@@ -125,11 +125,11 @@ public class ModelTest {
         assertTrue(model.isValid());
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
-        model.value("field1", Model.create().value("subField1", subFieldValue));
+        model.value("field1", RestModel.restModel().value("subField1", subFieldValue));
 
         model.require("field1.sub_field_1");
+        assertTrue(model.has("field_1", true));
         assertTrue(model.has("field_1"));
-        assertTrue(model.hasNonBlank("field_1"));
         assertFalse(model.get("field_1").isNull());
         assertEquals(subFieldValue, model.get("field_1").asModel().get("sub_field_1").asBigDecimal());
         assertTrue(model.isValid());
@@ -296,44 +296,44 @@ public class ModelTest {
 
     @Test
     public void hasNonBlank_string() {
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", "       ");
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", "4i5n245345");
-        assertTrue(model.hasNonBlank("field_1"));
+        assertTrue(model.has("field_1"));
     }
 
     @Test
     public void hasNonBlank_model() {
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
-        assertFalse(model.hasNonBlank("field_1"));
-        model.permit("field_1").value("field1", Model.create());
-        assertFalse(model.hasNonBlank("field_1"));
-        model.permit("field_1").value("field1", Model.create().permit("sub_field_1").value("sub_field_1", "438y54u31h5"));
-        assertTrue(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
+        model.permit("field_1").value("field1", RestModel.restModel());
+        assertFalse(model.has("field_1"));
+        model.permit("field_1").value("field1", RestModel.restModel().permit("sub_field_1").value("sub_field_1", "438y54u31h5"));
+        assertTrue(model.has("field_1"));
     }
 
     @Test
     public void hasNonBlank_list() {
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", emptyList());
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", asList("45y24b5245hh45j4"));
-        assertTrue(model.hasNonBlank("field_1"));
+        assertTrue(model.has("field_1"));
     }
 
     @Test
     public void hasNonBlank_decimal() {
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
-        assertFalse(model.hasNonBlank("field_1"));
+        assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", BigDecimal.valueOf(1349.134));
-        assertTrue(model.hasNonBlank("field_1"));
+        assertTrue(model.has("field_1"));
     }
 
     @Test

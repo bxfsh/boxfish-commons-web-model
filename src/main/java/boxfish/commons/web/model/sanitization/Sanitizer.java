@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Chooses the sanitizer that will be used to treat the value.
  * Important for pre-processing Maps and Lists with maps, because
- * Maps must be converted into Model before they are kept as data.
+ * Maps must be converted into RestModel before they are kept as data.
  * 
  * @author Hudson Mendes
  *

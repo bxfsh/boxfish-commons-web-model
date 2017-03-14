@@ -26,7 +26,7 @@ import boxfish.commons.web.model.validation.ValidationOfChildListener;
 import boxfish.commons.web.model.validation.Validator;
 
 /**
- * The Model used to be bound from any external input
+ * The RestModel used to be bound from any external input
  * being RequestBody or QueryString, which will have
  * all its field names standardised. It allows you to
  * scrutinize the input (permitting, requiring, defining
@@ -37,17 +37,17 @@ import boxfish.commons.web.model.validation.Validator;
  * @author Hudson Mendes
  *
  */
-public class Model implements Map<String, Object> {
+public class RestModel implements Map<String, Object> {
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static final String FIELD_LEVEL_SEPARATOR = "\\.";
 
     /**
-     * Inline creates a new instance of Model.
+     * Inline creates a new instance of RestModel.
      *
-     * @return newly created instance of Model.
+     * @return newly created instance of RestModel.
      */
-    public static Model create() {
-        return new Model();
+    public static RestModel restModel() {
+        return new RestModel();
     }
 
     /**
@@ -57,8 +57,8 @@ public class Model implements Map<String, Object> {
      * @param input the map that will be loaded.
      * @return the model created.
      */
-    public static Model from(final Map<String, Object> input) {
-        final Model created = create();
+    public static RestModel restModelFrom(final Map<String, Object> input) {
+        final RestModel created = restModel();
         created.putAll(input);
         return created;
     }
@@ -78,7 +78,7 @@ public class Model implements Map<String, Object> {
      * @param fields the list of fields which are allowed to even appear as part of the map.
      * @return self
      */
-    public Model permit(final String... fields) {
+    public RestModel permit(final String... fields) {
         if (fields != null && fields.length != 0)
             for (final String field : fields) {
                 final List<String> fieldAndSubFields = asList(field.split(FIELD_LEVEL_SEPARATOR));
@@ -92,13 +92,13 @@ public class Model implements Map<String, Object> {
 
                     if (fieldAndSubFields.size() > 1) {
                         final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
-                        Value nextLevelValue = get(fieldOfThisLevel);
+                        RestValue nextLevelValue = get(fieldOfThisLevel);
                         if (nextLevelValue.isNull()) {
-                            nextLevelValue = new Value(Model.create());
+                            nextLevelValue = new RestValue(RestModel.restModel());
                             value(fieldOfThisLevel, nextLevelValue);
                         }
 
-                        final Model nextLevelModel = nextLevelValue.asModel();
+                        final RestModel nextLevelModel = nextLevelValue.asModel();
                         if (nextLevelModel != null)
                             nextLevelModel.permit(fieldOfDownwardLevels);
                     }
@@ -115,7 +115,7 @@ public class Model implements Map<String, Object> {
      * @param fields which are going to be required.
      * @return self
      */
-    public Model require(final String... fields) {
+    public RestModel require(final String... fields) {
         if (fields != null && fields.length != 0)
             for (final String field : fields) {
                 final List<String> fieldAndSubFields = asList(field.split(FIELD_LEVEL_SEPARATOR));
@@ -131,13 +131,13 @@ public class Model implements Map<String, Object> {
 
                     if (fieldAndSubFields.size() > 1) {
                         final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
-                        Value nextLevelValue = get(fieldOfThisLevel);
+                        RestValue nextLevelValue = get(fieldOfThisLevel);
                         if (nextLevelValue.isNull()) {
-                            nextLevelValue = new Value(Model.create());
+                            nextLevelValue = new RestValue(RestModel.restModel());
                             value(fieldOfThisLevel, nextLevelValue);
                         }
 
-                        final Model nextLevelModel = nextLevelValue.asModel();
+                        final RestModel nextLevelModel = nextLevelValue.asModel();
                         if (nextLevelModel != null)
                             nextLevelModel.require(fieldOfDownwardLevels);
                     }
@@ -156,7 +156,7 @@ public class Model implements Map<String, Object> {
      * @param <TValue> type of the value being validated.
      * @return self
      */
-    public <TValue> Model rules(
+    public <TValue> RestModel rules(
             final String field,
             final ValidationListener<TValue> validatorBuilder) {
         final ConditionFactory condition = new ConditionFactory(this);
@@ -178,8 +178,8 @@ public class Model implements Map<String, Object> {
      * @param validatorBuilder
      * @return
      */
-    public Model rulesOnEachChildOf(final String field, final ValidationOfChildListener validatorBuilder) {
-        final ConditionCheck<Value> condition = new ConditionFactory(this).forType(Value.class);
+    public RestModel rulesOnEachChildOf(final String field, final ValidationOfChildListener validatorBuilder) {
+        final ConditionCheck<RestValue> condition = new ConditionFactory(this).forType(RestValue.class);
         final Validator validator = validatorBuilder.produce(condition);
         childreenRules.merge(
             key(field),
@@ -198,7 +198,7 @@ public class Model implements Map<String, Object> {
      * @param value the value of the field.
      * @return self
      */
-    public Model value(final String field, final Object value) {
+    public RestModel value(final String field, final Object value) {
         put(field, value);
         return this;
     }
@@ -211,7 +211,7 @@ public class Model implements Map<String, Object> {
      * @param value the default value of the field that it will assume in case no value has been defined.
      * @return self
      */
-    public Model baseline(final String field, final Object value) {
+    public RestModel baseline(final String field, final Object value) {
         final String treated = key(field);
         baseline.put(treated, value);
         return this;
@@ -238,22 +238,22 @@ public class Model implements Map<String, Object> {
     }
 
     /**
-     * If permitted, returned a wrapped Value.
+     * If permitted, returned a wrapped RestValue.
      * In case a value is not found for the field and a baseline value is found,
      * we return the baseline value as the value.
      *
      * @param field the field you want to retrieve.
-     * @return the wrapped Value.
+     * @return the wrapped RestValue.
      */
-    public Value get(final String field) {
+    public RestValue get(final String field) {
         final String treated = key(field);
         if (permitteds.contains(treated))
             if (data.containsKey(treated))
-                return new Value(data.get(treated));
+                return new RestValue(data.get(treated));
             else if (baseline.containsKey(treated))
-                return new Value(baseline.get(treated));
+                return new RestValue(baseline.get(treated));
 
-        return new Value(null);
+        return new RestValue(null);
     }
 
     /**
@@ -284,7 +284,7 @@ public class Model implements Map<String, Object> {
      * @param key the key which will be treated and searched for.
      */
     public boolean has(final String key) {
-        return containsKey(key);
+        return has(key, false);
     }
 
     /**
@@ -292,26 +292,37 @@ public class Model implements Map<String, Object> {
      * if it is not empty.
      *
      * @param key the key which will be treated and searched for.
+     * @param acceptsBlank switches on blank validation
      */
-    public boolean hasNonBlank(final String key) {
-        if (!has(key))
-            return false;
+    public boolean has(final String key, final boolean acceptsBlank) {
+        if (acceptsBlank)
+            return containsKey(key);
+        else
+            return !isNullOrBlankOrEmpty(key);
+    }
 
-        final Value value = get(key);
+    /**
+     * Reports if the value is null, blank (Strings) or empty (lists/maps)
+     */
+    public boolean isNullOrBlankOrEmpty(final String key) {
+        if (!containsKey(key))
+            return true;
+
+        final RestValue value = get(key);
         if (value.isNull())
-            return false;
+            return true;
 
         if (String.class.equals(value.getValueClass()))
-            return !value.asString().trim().equals("");
+            return value.asString().trim().equals("");
 
-        final List<Value> valueAsList = value.asList();
+        final List<RestValue> valueAsList = value.asList();
         if (valueAsList != null)
-            return !valueAsList.isEmpty();
+            return valueAsList.isEmpty();
 
-        if (Model.class.equals(value.getValueClass()))
-            return !value.asModel().isEmpty();
+        if (RestModel.class.equals(value.getValueClass()))
+            return value.asModel().isEmpty();
 
-        return value != null;
+        return value == null;
     }
 
     /**
@@ -384,10 +395,10 @@ public class Model implements Map<String, Object> {
                 key(key),
                 new Sanitizer(value).sanitize());
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             LOGGER.log(
                 Level.SEVERE,
-                format("Model failed to put :%s => '%s'", key, value),
+                format("RestModel failed to put :%s => '%s'", key, value),
                 e);
             return null;
         }
@@ -442,7 +453,7 @@ public class Model implements Map<String, Object> {
     }
 
     /**
-     * Parses the complex object (Model) into a readable simpler
+     * Parses the complex object (RestModel) into a readable simpler
      * inline string that can be used for debugging and dumping purposes.
      */
     @Override
@@ -454,7 +465,7 @@ public class Model implements Map<String, Object> {
             .sorted()
             .forEach(key -> {
                 try {
-                    final Value raw = get(key);
+                    final RestValue raw = get(key);
                     if (raw != null) {
                         final String value = raw.asString();
                         if (output.length() > 1)
@@ -484,7 +495,7 @@ public class Model implements Map<String, Object> {
     }
 
     private String key(final String field) {
-        return new Key(field).build();
+        return new FlexibleKey(field).build();
     }
 
 }

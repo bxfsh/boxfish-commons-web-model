@@ -25,10 +25,10 @@ import boxfish.commons.web.model.converters.ValueToString;
  * @author Hudson Mendes
  *
  */
-public class Value {
+public class RestValue {
     private final Object value;
 
-    public Value(final Object value) {
+    public RestValue(final Object value) {
         this.value = value;
     }
 
@@ -130,13 +130,13 @@ public class Value {
     }
 
     /**
-     * Presents the value as a Model. Used for nested
+     * Presents the value as a RestModel. Used for nested
      * objects that may come in a JSON like or similar
      * structures.
      *
-     * @return a Model representing the value when it's a complex object.
+     * @return a RestModel representing the value when it's a complex object.
      */
-    public Model asModel() {
+    public RestModel asModel() {
         return new ValueToModel(value).parse();
     }
 
@@ -154,9 +154,9 @@ public class Value {
     /**
      * Presents the value as a List of a particular type.
      *
-     * @return a List of {@link Value} representing the value.
+     * @return a List of {@link RestValue} representing the value.
      */
-    public List<Value> asList() {
+    public List<RestValue> asList() {
         return new ValueToList(value).parse();
     }
 

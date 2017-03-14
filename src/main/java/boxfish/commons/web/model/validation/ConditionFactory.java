@@ -1,6 +1,6 @@
 package boxfish.commons.web.model.validation;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 /**
  * Allows you to start the first state of the condition
@@ -11,9 +11,9 @@ import boxfish.commons.web.model.Model;
  *
  */
 public class ConditionFactory {
-    private final Model hashModel;
+    private final RestModel hashModel;
 
-    public ConditionFactory(Model hashModel) {
+    public ConditionFactory(RestModel hashModel) {
         this.hashModel = hashModel;
     }
 

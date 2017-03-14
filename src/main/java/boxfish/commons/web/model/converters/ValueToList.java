@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import boxfish.commons.web.model.Model;
-import boxfish.commons.web.model.Value;
+import boxfish.commons.web.model.RestModel;
+import boxfish.commons.web.model.RestValue;
 
 /**
  * Sophisticated type conversion and parsing from Object to List,
@@ -18,13 +18,13 @@ import boxfish.commons.web.model.Value;
  * @author Hudson Mendes
  *
  */
-public class ValueToList extends AbstractValueConverter<List<Value>> {
+public class ValueToList extends AbstractValueConverter<List<RestValue>> {
     public ValueToList(final Object value) {
         super(value);
     }
 
     @Override
-    public List<Value> parse() {
+    public List<RestValue> parse() {
         if (getValue() == null)
             return null;
 
@@ -55,13 +55,13 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
         if (Double[].class.equals(getValueClass()))
             return collectAsList((Double[]) getValue());
 
-        if (Model[].class.equals(getValueClass()))
-            return collectAsList((Model[]) getValue());
+        if (RestModel[].class.equals(getValueClass()))
+            return collectAsList((RestModel[]) getValue());
 
         if (List.class.isAssignableFrom(getValueClass()))
             return ((List<?>) getValue())
                 .stream()
-                .map(v -> new Value(v))
+                .map(v -> new RestValue(v))
                 .collect(Collectors.toList());
 
         if (String.class.equals(getValueClass()))
@@ -70,7 +70,7 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
         return null;
     }
 
-    private List<Value> stringAsListOf(String value) {
+    private List<RestValue> stringAsListOf(String value) {
         if (value != null) {
             value = value.trim().replaceAll("^\\[|\\]$", "");
 
@@ -90,10 +90,10 @@ public class ValueToList extends AbstractValueConverter<List<Value>> {
         return null;
     }
 
-    private <TOriginal extends Object> List<Value> collectAsList(final TOriginal[] objects) {
+    private <TOriginal extends Object> List<RestValue> collectAsList(final TOriginal[] objects) {
         return Arrays
             .stream(objects)
-            .map(v -> new Value(v))
+            .map(v -> new RestValue(v))
             .collect(Collectors.toList());
     }
 
