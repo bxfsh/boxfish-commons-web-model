@@ -24,7 +24,7 @@ class SanitizerForMaps extends SanitizerFor<RestModel, Map> {
     }
 
     private RestModel newModelFromMap() {
-        final RestModel translation = RestModel.restModel();
+        final RestModel translation = RestModel.newRestModel();
         if (getRawValue() != null) {
             final Map<?, ?> parsedMap = (Map<?, ?>) getRawValue();
             parsedMap.forEach((k, v) -> {
