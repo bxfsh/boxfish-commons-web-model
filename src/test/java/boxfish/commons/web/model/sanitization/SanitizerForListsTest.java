@@ -48,7 +48,7 @@ public class SanitizerForListsTest {
         final List<Object> unexpected = new ArrayList<>();
         unexpected.add("345827345asdfasdf");
         unexpected.add(BigDecimal.valueOf(123451785.45));
-        unexpected.add(RestModel.restModel().permit("name").value("name", "au8345h2345"));
+        unexpected.add(RestModel.newRestModel().permit("name").value("name", "au8345h2345"));
         unexpected.add(translatableMap);
 
         List<Object> actual = (List<Object>) new SanitizerForLists(unexpected).sanitize();
@@ -115,7 +115,7 @@ public class SanitizerForListsTest {
 
     @Test
     public void sanitize_model() {
-        final RestModel expected = RestModel.restModel();
+        final RestModel expected = RestModel.newRestModel();
         assertEquals(expected, new SanitizerForLists(expected).sanitize());
     }
 

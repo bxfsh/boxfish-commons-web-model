@@ -46,7 +46,7 @@ public class RestModel implements Map<String, Object> {
      *
      * @return newly created instance of RestModel.
      */
-    public static RestModel restModel() {
+    public static RestModel newRestModel() {
         return new RestModel();
     }
 
@@ -58,7 +58,7 @@ public class RestModel implements Map<String, Object> {
      * @return the model created.
      */
     public static RestModel restModelFrom(final Map<String, Object> input) {
-        final RestModel created = restModel();
+        final RestModel created = newRestModel();
         created.putAll(input);
         return created;
     }
@@ -94,7 +94,7 @@ public class RestModel implements Map<String, Object> {
                         final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
                         RestValue nextLevelValue = get(fieldOfThisLevel);
                         if (nextLevelValue.isNull()) {
-                            nextLevelValue = new RestValue(RestModel.restModel());
+                            nextLevelValue = new RestValue(RestModel.newRestModel());
                             value(fieldOfThisLevel, nextLevelValue);
                         }
 
@@ -133,7 +133,7 @@ public class RestModel implements Map<String, Object> {
                         final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
                         RestValue nextLevelValue = get(fieldOfThisLevel);
                         if (nextLevelValue.isNull()) {
-                            nextLevelValue = new RestValue(RestModel.restModel());
+                            nextLevelValue = new RestValue(RestModel.newRestModel());
                             value(fieldOfThisLevel, nextLevelValue);
                         }
 

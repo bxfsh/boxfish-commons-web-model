@@ -26,7 +26,7 @@ public class ValueToModel extends AbstractValueConverter<RestModel> {
         if (Map.class.isAssignableFrom(getValueClass()))
             reportIllegalState();
 
-        return RestModel.restModel();
+        return RestModel.newRestModel();
     }
 
     private void reportIllegalState() {

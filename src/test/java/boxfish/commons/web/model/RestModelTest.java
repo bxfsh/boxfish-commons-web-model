@@ -35,14 +35,14 @@ public class RestModelTest {
     }
 
     @Test
-    public void newModel() {
-        final RestModel actual = RestModel.restModel();
+    public void newRestModel() {
+        final RestModel actual = RestModel.newRestModel();
         assertNotNull(actual);
         assertEquals(0, actual.size());
     }
 
     @Test
-    public void modelFrom() {
+    public void restModelFrom() {
         final Map<String, Object> input = new LinkedHashMap<>();
         final String field1Value = "whatever data";
         final BigDecimal field2Value = BigDecimal.valueOf(23);
@@ -85,7 +85,7 @@ public class RestModelTest {
     public void permit_subField() throws Exception {
         final BigDecimal subFieldValue = BigDecimal.valueOf(13481348);
 
-        model.value("field1", RestModel.restModel().value("subField1", subFieldValue));
+        model.value("field1", RestModel.newRestModel().value("subField1", subFieldValue));
         assertFalse(model.has("field_1", true));
         assertFalse(model.has("field_1"));
         assertTrue(model.get("field_1").isNull());
@@ -125,7 +125,7 @@ public class RestModelTest {
         assertTrue(model.isValid());
         assertNotNull(model.get(FIELD_NAME));
         assertFalse(model.get(FIELD_NAME).isNull());
-        model.value("field1", RestModel.restModel().value("subField1", subFieldValue));
+        model.value("field1", RestModel.newRestModel().value("subField1", subFieldValue));
 
         model.require("field1.sub_field_1");
         assertTrue(model.has("field_1", true));
@@ -310,9 +310,9 @@ public class RestModelTest {
         assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
         assertFalse(model.has("field_1"));
-        model.permit("field_1").value("field1", RestModel.restModel());
+        model.permit("field_1").value("field1", RestModel.newRestModel());
         assertFalse(model.has("field_1"));
-        model.permit("field_1").value("field1", RestModel.restModel().permit("sub_field_1").value("sub_field_1", "438y54u31h5"));
+        model.permit("field_1").value("field1", RestModel.newRestModel().permit("sub_field_1").value("sub_field_1", "438y54u31h5"));
         assertTrue(model.has("field_1"));
     }
 
