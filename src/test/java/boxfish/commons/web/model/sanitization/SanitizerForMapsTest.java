@@ -97,7 +97,7 @@ public class SanitizerForMapsTest {
 
     @Test
     public void sanitize_model() {
-        final RestModel expected = RestModel.restModel();
+        final RestModel expected = RestModel.newRestModel();
         assertEquals(expected, new SanitizerForMaps(expected).sanitize());
     }
 
