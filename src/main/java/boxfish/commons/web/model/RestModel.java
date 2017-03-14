@@ -175,8 +175,8 @@ public class RestModel implements Map<String, Object> {
      * Defines validation rules used on each child of a list value.
      *
      * @param field the name of the list field.
-     * @param validatorBuilder
-     * @return
+     * @param validatorBuilder listener responsible for building a validation rule and storing it.
+     * @return self
      */
     public RestModel rulesOnEachChildOf(final String field, final ValidationOfChildListener validatorBuilder) {
         final ConditionCheck<RestValue> condition = new ConditionFactory(this).forType(RestValue.class);
@@ -282,6 +282,7 @@ public class RestModel implements Map<String, Object> {
      * Alias for 'containsKey'
      *
      * @param key the key which will be treated and searched for.
+     * @return true, if the key is present and is NOT blank
      */
     public boolean has(final String key) {
         return has(key, false);
@@ -293,6 +294,7 @@ public class RestModel implements Map<String, Object> {
      *
      * @param key the key which will be treated and searched for.
      * @param acceptsBlank switches on blank validation
+     * @return depends on acceptsBlank, returns true if a value is present, false otherwise.
      */
     public boolean has(final String key, final boolean acceptsBlank) {
         if (acceptsBlank)
@@ -302,7 +304,10 @@ public class RestModel implements Map<String, Object> {
     }
 
     /**
-     * Reports if the value is null, blank (Strings) or empty (lists/maps)
+     * Reports if the value is null, blank (Strings) or empty (lists/maps).
+     * 
+     * @param key the key that will be checked against the data, after normalised.
+     * @return true if the value is null, blank or empty; false otherwise.
      */
     public boolean isNullOrBlankOrEmpty(final String key) {
         if (!containsKey(key))
