@@ -2,27 +2,27 @@ package boxfish.commons.web.model.validation;
 
 import java.util.function.BiFunction;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 /**
  * The final state of the Condition Builder, responsible for
  * defining the failure message in case the condition has failed
  * and creating the validator that will be included in the list
- * of validators in the Model.
+ * of validators in the RestModel.
  * 
  * @author Hudson Mendes
  *
  * @param <TValue> the type of the value that will be tested.
  */
 public class ConditionWarn<TValue> {
-    private final Model hashModel;
+    private final RestModel hashModel;
     private final Class<TValue> valueClass;
-    private final BiFunction<Model, TValue, Boolean> test;
+    private final BiFunction<RestModel, TValue, Boolean> test;
     private String alertMessage;
 
     ConditionWarn(
-            final Model hashModel,
-            final BiFunction<Model, TValue, Boolean> test,
+            final RestModel hashModel,
+            final BiFunction<RestModel, TValue, Boolean> test,
             final Class<TValue> valueClass) {
         if (hashModel == null)
             throw new IllegalArgumentException("'hashModel' can't be null.");
@@ -72,7 +72,7 @@ public class ConditionWarn<TValue> {
         };
     }
 
-    Model getHashModel() {
+    RestModel getHashModel() {
         return hashModel;
     }
 
@@ -80,7 +80,7 @@ public class ConditionWarn<TValue> {
         return valueClass;
     }
 
-    BiFunction<Model, TValue, Boolean> getTest() {
+    BiFunction<RestModel, TValue, Boolean> getTest() {
         return test;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class SanitizerForListsTest {
 
@@ -48,7 +48,7 @@ public class SanitizerForListsTest {
         final List<Object> unexpected = new ArrayList<>();
         unexpected.add("345827345asdfasdf");
         unexpected.add(BigDecimal.valueOf(123451785.45));
-        unexpected.add(Model.create().permit("name").value("name", "au8345h2345"));
+        unexpected.add(RestModel.restModel().permit("name").value("name", "au8345h2345"));
         unexpected.add(translatableMap);
 
         List<Object> actual = (List<Object>) new SanitizerForLists(unexpected).sanitize();
@@ -56,10 +56,10 @@ public class SanitizerForListsTest {
 
         assertThat(actual.get(0), instanceOf(String.class));
         assertThat(actual.get(1), instanceOf(BigDecimal.class));
-        assertThat(actual.get(2), instanceOf(Model.class));
-        assertThat(actual.get(3), instanceOf(Model.class));
+        assertThat(actual.get(2), instanceOf(RestModel.class));
+        assertThat(actual.get(3), instanceOf(RestModel.class));
 
-        Model parsedModel = (Model) actual.get(3);
+        RestModel parsedModel = (RestModel) actual.get(3);
         parsedModel.permit("test_1", "test2");
         assertEquals(translatableMap.get("test1"), parsedModel.get("test_1").asString());
         assertEquals(translatableMap.get("test_2"), parsedModel.get("test_2").asString());
@@ -115,7 +115,7 @@ public class SanitizerForListsTest {
 
     @Test
     public void sanitize_model() {
-        final Model expected = Model.create();
+        final RestModel expected = RestModel.restModel();
         assertEquals(expected, new SanitizerForLists(expected).sanitize());
     }
 

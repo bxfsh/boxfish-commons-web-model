@@ -7,7 +7,7 @@ import java.time.Instant;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class ValueToStringTest {
 
@@ -61,11 +61,11 @@ public class ValueToStringTest {
 
     @Test
     public void parse_from_model() throws Exception {
-        final Model expected = new Model()
+        final RestModel expected = new RestModel()
             .permit("field1", "field2", "field3")
             .value("field1", "1341234asdasds")
             .value("field2", Long.valueOf(123481))
-            .value("field3", new Model().permit("subField1").value("subField1", 1))
+            .value("field3", new RestModel().permit("subField1").value("subField1", 1))
             .value("field4", true);
         assertEquals("[field_1=1341234asdasds;field_2=123481;field_3=[sub_field_1=1]]", new ValueToString(expected).parse());
     }

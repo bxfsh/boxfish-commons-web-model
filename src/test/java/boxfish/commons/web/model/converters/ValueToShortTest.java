@@ -8,7 +8,7 @@ import java.time.Instant;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class ValueToShortTest {
 
@@ -74,11 +74,11 @@ public class ValueToShortTest {
 
     @Test
     public void parse_from_model() throws Exception {
-        final Model expected = new Model()
+        final RestModel expected = new RestModel()
             .permit("field1", "field2", "field3", "field4")
             .value("field1", "1341234asdasds")
             .value("field2", Long.valueOf(123481))
-            .value("field3", new Model().permit("subField1").value("subField1", 1))
+            .value("field3", new RestModel().permit("subField1").value("subField1", 1))
             .value("field4", true);
         assertNull(new ValueToShort(expected).parse());
     }
