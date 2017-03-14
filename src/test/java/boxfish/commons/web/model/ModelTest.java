@@ -35,14 +35,14 @@ public class ModelTest {
     }
 
     @Test
-    public void create() {
+    public void newModel() {
         final Model actual = Model.create();
         assertNotNull(actual);
         assertEquals(0, actual.size());
     }
 
     @Test
-    public void from() {
+    public void modelFrom() {
         final Map<String, Object> input = new LinkedHashMap<>();
         final String field1Value = "whatever data";
         final BigDecimal field2Value = BigDecimal.valueOf(23);

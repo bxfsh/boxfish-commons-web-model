@@ -1,5 +1,6 @@
 package boxfish.commons.web.model;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
@@ -11,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import boxfish.commons.web.model.converters.ValueToModel;
+import boxfish.commons.web.model.sanitization.Sanitizer;
 import boxfish.commons.web.model.validation.ConditionCheck;
 import boxfish.commons.web.model.validation.ConditionFactory;
 import boxfish.commons.web.model.validation.ModelErrors;
@@ -35,7 +38,7 @@ import boxfish.commons.web.model.validation.Validator;
  *
  */
 public class Model implements Map<String, Object> {
-
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static final String FIELD_LEVEL_SEPARATOR = "\\.";
 
     /**
@@ -376,20 +379,18 @@ public class Model implements Map<String, Object> {
      */
     @Override
     public Object put(final String key, final Object value) {
-        return data.put(key(key), sanitizeMap(value));
-    }
-
-    /**
-     * Ensures that Value put follows the desired constraints.
-     *
-     * @param value the value beign put
-     * @return the value put;
-     */
-    private Object sanitizeMap(final Object value) {
-        if (value != null)
-            if (Map.class.isAssignableFrom(value.getClass()) && !Model.class.equals(value.getClass()))
-                return ValueToModel.newModelFromMap((Map<?, ?>) value);
-        return value;
+        try {
+            return data.put(
+                key(key),
+                new Sanitizer(value).sanitize());
+        }
+        catch (Exception e) {
+            LOGGER.log(
+                Level.SEVERE,
+                format("Model failed to put :%s => '%s'", key, value),
+                e);
+            return null;
+        }
     }
 
     /**
