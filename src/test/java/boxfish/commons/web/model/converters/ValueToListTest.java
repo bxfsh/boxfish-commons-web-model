@@ -199,8 +199,8 @@ public class ValueToListTest {
     @Test
     public void parse_from_array_model() throws Exception {
         final RestModel[] expected = new RestModel[] {
-            RestModel.restModel().permit("a").value("a", 1),
-            RestModel.restModel().permit("b").value("b", 2)
+            RestModel.newRestModel().permit("a").value("a", 1),
+            RestModel.newRestModel().permit("b").value("b", 2)
         };
         assertEquals(expected.length, new ValueToList(expected).parse().size());
         assertEquals(expected[0].get("a").asInteger(), new ValueToList(expected).parse().get(0).asModel().get("a").asInteger());
