@@ -20,45 +20,18 @@ public class ValueToModel extends AbstractValueConverter<Model> {
 
     @Override
     public Model parse() {
-        if (getValue() != null)
-            if (shouldBeReplacedByModel()) {
-                overrideValue(newModelFromMap((Map<?, ?>) getValue()));
-            }
-
         if (Model.class.equals(getValueClass()))
             return (Model) getValue();
+
+        if (Map.class.isAssignableFrom(getValueClass()))
+            reportIllegalState();
 
         return Model.create();
     }
 
-    /**
-     * Analyses if the value is a map and should be replaced by a model.
-     * 
-     * @return
-     */
-    private boolean shouldBeReplacedByModel() {
-        return !Model.class.equals(getValueClass()) && Map.class.isAssignableFrom(getValueClass());
-    }
-
-    /**
-     * Translates a map to a model, to avoid keeping Maps in our structure.
-     * Maps lack the permit/require instructions and can cause problems
-     * for nested permit/require commands.
-     *
-     * @param value the map that will be translated
-     */
-    public static Model newModelFromMap(final Map<?, ?> value) {
-        if (value != null)
-            if (Model.class.equals(value.getClass()))
-                return (Model) value;
-
-        final Model translation = Model.create();
-        if (value != null)
-            value.forEach((k, v) -> {
-                if (k != null)
-                    translation.put(k.toString(), v);
-            });
-        return translation;
+    private void reportIllegalState() {
+        throw new IllegalStateException("The value should have been sanitized and may NOT be a map."
+                                        + "All maps must become Model before being kept as data.");
     }
 
 }
