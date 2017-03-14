@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class ValueToListTest {
     @Test
@@ -75,11 +75,11 @@ public class ValueToListTest {
 
     @Test
     public void parse_from_model() throws Exception {
-        final Model expected = new Model()
+        final RestModel expected = new RestModel()
             .permit("field1", "field2", "field3", "field4")
             .value("field1", "1341234asdasds")
             .value("field2", Long.valueOf(123481))
-            .value("field3", new Model().permit("subField1").value("subField1", 1))
+            .value("field3", new RestModel().permit("subField1").value("subField1", 1))
             .value("field4", true);
         assertNull(new ValueToList(expected).parse());
     }
@@ -198,9 +198,9 @@ public class ValueToListTest {
 
     @Test
     public void parse_from_array_model() throws Exception {
-        final Model[] expected = new Model[] {
-            Model.create().permit("a").value("a", 1),
-            Model.create().permit("b").value("b", 2)
+        final RestModel[] expected = new RestModel[] {
+            RestModel.restModel().permit("a").value("a", 1),
+            RestModel.restModel().permit("b").value("b", 2)
         };
         assertEquals(expected.length, new ValueToList(expected).parse().size());
         assertEquals(expected[0].get("a").asInteger(), new ValueToList(expected).parse().get(0).asModel().get("a").asInteger());

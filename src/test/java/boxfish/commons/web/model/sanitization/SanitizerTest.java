@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 public class SanitizerTest {
 
@@ -29,9 +29,9 @@ public class SanitizerTest {
         final Object actual = new Sanitizer(expected).sanitize();
 
         assertNotEquals(expected, actual);
-        assertThat(actual, instanceOf(Model.class));
+        assertThat(actual, instanceOf(RestModel.class));
 
-        final Model parsed = (Model) actual;
+        final RestModel parsed = (RestModel) actual;
         parsed.permit("field_1");
         assertEquals(expected.get("field1"), parsed.get("field_1").asString());
     }
@@ -53,8 +53,8 @@ public class SanitizerTest {
         final List<Object> parsed = (List<Object>) actual;
         assertEquals(expected.get(0), parsed.get(0));
 
-        assertThat(parsed.get(1), instanceOf(Model.class));
-        final Model parsedItem = (Model) parsed.get(1);
+        assertThat(parsed.get(1), instanceOf(RestModel.class));
+        final RestModel parsedItem = (RestModel) parsed.get(1);
         assertEquals(
             subMap.get("field1"),
             parsedItem.permit("field_1").get("field_1").asString());

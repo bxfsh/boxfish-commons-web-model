@@ -6,13 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-public class KeyTest {
+public class FlexibleKeyTest {
     private final static String CAMEL_CASED_FIELD_NAME = "thisField11234,.IsWrittenInCamelCaseToBeConverted";
-    private Key namer;
+    private FlexibleKey namer;
 
     @Before
     public void setup() {
-        namer = new Key(CAMEL_CASED_FIELD_NAME);
+        namer = new FlexibleKey(CAMEL_CASED_FIELD_NAME);
     }
 
     @Test

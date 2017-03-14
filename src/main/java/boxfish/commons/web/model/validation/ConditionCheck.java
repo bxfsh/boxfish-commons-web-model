@@ -2,7 +2,7 @@ package boxfish.commons.web.model.validation;
 
 import java.util.function.BiFunction;
 
-import boxfish.commons.web.model.Model;
+import boxfish.commons.web.model.RestModel;
 
 /**
  * State instance that is ready to receive and send forwards
@@ -14,10 +14,10 @@ import boxfish.commons.web.model.Model;
  * @param <TValue> the type of the value that will be tested.
  */
 public class ConditionCheck<TValue> {
-    private final Model hashModel;
+    private final RestModel hashModel;
     private final Class<TValue> valueClass;
 
-    ConditionCheck(final Model hashModel, final Class<TValue> valueClass) {
+    ConditionCheck(final RestModel hashModel, final Class<TValue> valueClass) {
         if (hashModel == null)
             throw new IllegalArgumentException("'hashModel' can't be null.");
 
@@ -35,7 +35,7 @@ public class ConditionCheck<TValue> {
      * @param test the check procedure, use Java8 lambdas here to implement the anonymous interface.
      * @return the next state in the condition builder that allows you to create set the error warning.
      */
-    public ConditionWarn<TValue> ifValueFailsOn(final BiFunction<Model, TValue, Boolean> test) {
+    public ConditionWarn<TValue> ifValueFailsOn(final BiFunction<RestModel, TValue, Boolean> test) {
         if (test == null)
             throw new IllegalArgumentException("'test' can't be null.");
 

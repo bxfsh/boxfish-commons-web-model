@@ -11,7 +11,7 @@ package boxfish.commons.web.model;
  * @author Thiago Neves
  *
  */
-class Key {
+class FlexibleKey {
 
     private final String field;
 
@@ -25,7 +25,7 @@ class Key {
      * 
      * @param field the field name with any case.
      */
-    public Key(final String field) {
+    public FlexibleKey(final String field) {
         this.field = field;
     }
 
