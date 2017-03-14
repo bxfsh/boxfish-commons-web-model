@@ -1,7 +1,5 @@
 package boxfish.commons.web.model.validation;
 
-import static java.lang.String.format;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,10 +117,6 @@ public class ModelValidator {
                         if (!validator.isValid(childValue))
                             errors.addError(ruleField, validator.errorMessage());
             }
-            else
-                errors.addError(
-                    ruleField,
-                    format("The field '%s' was expected to be a list, there are rules to be applied to its childreen, but it was not a list."));
         }
     }
 }
