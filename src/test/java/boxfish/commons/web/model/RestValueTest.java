@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.Thread.State;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +76,13 @@ public class RestValueTest {
     public void asInstant() throws Exception {
         final Instant expected = Instant.now();
         assertEquals(expected, new RestValue(expected).asInstant());
+    }
+
+    @Test
+    public void asTimestamp() throws Exception {
+        final Instant instant = Instant.now();
+        final Timestamp expected = Timestamp.from(instant);
+        assertEquals(expected, new RestValue(instant).asTimestamp());
     }
 
     @Test
