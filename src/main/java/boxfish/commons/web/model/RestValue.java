@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
@@ -130,6 +131,20 @@ public class RestValue {
      */
     public Instant asInstant() {
         return new ValueToInstant(value).parse();
+    }
+
+    /**
+     * Presents the Instant as Timestamp.
+     * Specially useful when mapping to databases.
+     * 
+     * @return a Timestamp representing the instant value.
+     */
+    public Timestamp asTimestamp() {
+        Instant instant = asInstant();
+        if (instant != null)
+            return Timestamp.from(instant);
+        else
+            return null;
     }
 
     /**

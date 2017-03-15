@@ -1,6 +1,7 @@
 package boxfish.commons.web.model.converters;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 /**
@@ -45,6 +46,12 @@ public class ValueToInstant extends AbstractValueConverter<Instant> {
 
         if (Instant.class.equals(getValueClass()))
             return (Instant) getValue();
+
+        if (Timestamp.class.equals(getValueClass())) {
+            Timestamp stamp = (Timestamp) getValue();
+            if (stamp != null)
+                return stamp.toInstant();
+        }
 
         return null;
     }
