@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 import org.junit.Test;
@@ -52,6 +53,13 @@ public class ValueToInstantTest {
     public void parse_from_instant() throws Exception {
         final Instant expected = Instant.now();
         assertEquals(expected, new ValueToInstant(expected).parse());
+    }
+
+    @Test
+    public void parse_from_timestamp() throws Exception {
+        final Instant expected = Instant.now();
+        final Timestamp stamp = Timestamp.from(expected);
+        assertEquals(expected, new ValueToInstant(stamp).parse());
     }
 
     @Test
