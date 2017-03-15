@@ -1,5 +1,7 @@
 package boxfish.commons.web.model;
 
+import static java.lang.Thread.State.BLOCKED;
+import static java.time.Instant.now;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -7,7 +9,11 @@ import static org.junit.Assert.assertTrue;
 import java.lang.Thread.State;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.javatuples.Triplet;
 import org.junit.Test;
 
 public class RestValueTest {
@@ -69,6 +75,30 @@ public class RestValueTest {
     public void asInstant() throws Exception {
         final Instant expected = Instant.now();
         assertEquals(expected, new RestValue(expected).asInstant());
+    }
+
+    @Test
+    public void asList() throws Exception {
+        final Instant now = now();
+        final RestModel restModel = RestModel.newRestModel();
+        final List<Triplet<Class<?>, Object, Object>> fixtures = new ArrayList<>();
+        fixtures.add(new Triplet<>(Boolean.class, Arrays.asList(true), Arrays.asList(true)));
+        fixtures.add(new Triplet<>(Byte.class, Arrays.asList((byte) 1), Arrays.asList((byte) 1)));
+        fixtures.add(new Triplet<>(Short.class, Arrays.asList((short) 1), Arrays.asList((short) 1)));
+        fixtures.add(new Triplet<>(Integer.class, Arrays.asList(1), Arrays.asList(1)));
+        fixtures.add(new Triplet<>(Long.class, Arrays.asList(1l), Arrays.asList(1l)));
+        fixtures.add(new Triplet<>(String.class, Arrays.asList("name"), Arrays.asList("name")));
+        fixtures.add(new Triplet<>(State.class, Arrays.asList("BLOCKED"), Arrays.asList(BLOCKED)));
+        fixtures.add(new Triplet<>(Instant.class, Arrays.asList(now), Arrays.asList(now)));
+        fixtures.add(new Triplet<>(RestModel.class, Arrays.asList(restModel), Arrays.asList(restModel)));
+        for (int i = 0; i < fixtures.size(); i++) {
+            final Triplet<Class<?>, Object, Object> fixture = fixtures.get(i);
+            final Class<?> type = fixture.getValue0();
+            final Object input = fixture.getValue1();
+            final Object expected = fixture.getValue2();
+            final List<?> output = new RestValue(input).asListOf(type);
+            assertEquals(expected, output);
+        }
     }
 
     @Test

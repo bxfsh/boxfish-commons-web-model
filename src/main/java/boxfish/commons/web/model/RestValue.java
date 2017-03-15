@@ -1,5 +1,8 @@
 package boxfish.commons.web.model;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -147,17 +150,58 @@ public class RestValue {
      * @param <TEnum> the type of the enum that will be used as return value.
      * @return the value of the Enum that was parsed from the original value.
      */
-    public <TEnum extends Enum<TEnum>> TEnum asEnum(final Class<TEnum> enumType) {
+    public <TEnum extends Enum<TEnum>>TEnum asEnum(final Class<TEnum> enumType) {
         return new ValueToEnum<>(value, enumType).parse();
     }
 
     /**
-     * Presents the value as a List of a particular type.
+     * Presents the value as a List of wrapped values.
      *
      * @return a List of {@link RestValue} representing the value.
      */
     public List<RestValue> asList() {
         return new ValueToList(value).parse();
+    }
+
+    /**
+     * Presents the value as a List of a particular type.
+     * 
+     * @param clazz the type in which we will display the childreen.
+     * @return a typed list of values.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public <TValue> List<TValue> asListOf(Class<TValue> clazz) {
+        if (clazz == null)
+            throw new IllegalArgumentException("'clazz' can't be null.");
+
+        if (BigDecimal.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asBigDecimal()).collect(toList());
+        else if (Boolean.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asBoolean()).collect(toList());
+        else if (Byte.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asByte()).collect(toList());
+        else if (Double.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asDouble()).collect(toList());
+        else if (clazz.isEnum())
+            return (List<TValue>) asList().stream().map(v -> (TValue) v.asEnum((Class<Enum>) clazz)).collect(toList());
+        else if (Float.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asFloat()).collect(toList());
+        else if (Instant.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asInstant()).collect(toList());
+        else if (Integer.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asInteger()).collect(toList());
+        else if (Long.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asLong()).collect(toList());
+        else if (RestModel.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asModel()).collect(toList());
+        else if (Short.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asShort()).collect(toList());
+        else if (String.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asString()).collect(toList());
+        else if (Object.class.equals(clazz))
+            return asList().stream().map(v -> (TValue) v.asOriginal()).collect(toList());
+        else
+            throw new UnsupportedOperationException(format("We cannot represent the value as a list of %s", clazz.getName()));
     }
 
     /**
