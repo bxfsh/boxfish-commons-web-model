@@ -1,28 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.boxfish</groupId>
     <artifactId>boxfish-commons-web-model</artifactId>
-    <version>1.0.1-SNAPSHOT</version>  
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Open Source auxiliary libraries for building RESTful microservices.</description>
     <url>http://github.com/bxfsh/boxfish-commons-web-model</url>
-    
+
     <organization>
         <name>Boxfish</name>
         <url>http://www.boxfish.com</url>
     </organization>
-    
+
     <licenses>
         <license>
             <name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
         </license>
     </licenses>
-    
+
     <developers>
         <developer>
             <name>Hudson Mendes</name>
@@ -31,14 +31,14 @@
             <organizationUrl>http://www.boxfish.com</organizationUrl>
         </developer>
     </developers>
-    
+
     <scm>
-        <connection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</connection>
-        <developerConnection>scm:git:git://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
-        <url>http://github.com/bxfsh/boxfish-commons-web-model/tree/master/</url>
+	<connection>scm:git:https://github.com/bxfsh/boxfish-commons-web-model.git</connection>
+	<developerConnection>scm:git:http://github.com/bxfsh/boxfish-commons-web-model.git</developerConnection>
+        <url>https://github.com/bxfsh/boxfish-commons-web-model</url>
       	<tag>boxfish-commons-web-model-1.0.1</tag>
-  	</scm>
-  
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -49,7 +49,7 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-    
+
     <profiles>
         <profile>
             <id>release-sign-artifacts</id>
@@ -64,7 +64,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -79,7 +79,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -101,51 +101,48 @@
         </dependency>
 
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.8</version>
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
@@ -154,5 +151,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>
