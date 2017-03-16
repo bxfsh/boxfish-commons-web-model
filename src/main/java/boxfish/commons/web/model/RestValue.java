@@ -179,9 +179,10 @@ public class RestValue {
     }
 
     /**
-     * Presents the value as a List of a particular type.
+     * * Presents the value as a List of a particular type.
      * 
      * @param clazz the type in which we will display the childreen.
+     * @param <TValue> the value to which we will try to parse.
      * @return a typed list of values.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
