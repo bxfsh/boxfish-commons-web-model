@@ -27,7 +27,7 @@ This problem is very similar the one you have if you do this.
 
 ```java
 
-	// Controller.java
+    // Controller.java
     @RequestMapping(value = "", method = POST)
     public ResponseEntity<?> create(final @RequestBody @Valid Entity input) {
         final EntityDTO entity = repo.save(input);
@@ -52,7 +52,7 @@ This *boxfish-commons-web-model* allows the 3 items above to be all performed in
 Install the dependency
 
 ```gradle
-compile 'com.boxfish:boxfish-commons-web-model:1.0.0'
+compile 'com.boxfish:boxfish-commons-web-model:1.0.1'
 ```
 
 Then update your classpath
@@ -65,12 +65,18 @@ Include the HashModel as your model in your controller
 
 ```java
 
-    @RequestMapping(value = "", method = POST)
-    public ResponseEntity<?> create(final @RequestBody HashModel input) {
-        final EntityDTO entity = service.create(input);
-        return ResponseEntity
-        	.created(URI.create("resources/" + entity.getId()))
-        	.body(entity);
+    @RequestMapping(path = "", method = POST)
+    public ResponseEntity<?> create(
+            final @RequestBody RestModel input) throws Exception {
+
+        input.require("name");
+        if (input.isValid()) {
+            final LabelDTO dto = service.create(groupId, input);
+	    final String resource = "groups/" + groupId + "/labels/" + dto.getId();
+            return created(URI.create(resource)).body(dto);
+	}
+	else
+            return badRequest().body(input.errors());
     }
     
 ```
@@ -80,31 +86,18 @@ And finally
 ```java  
 
     // Controller.java
-    @Autowired
-    private NodesValidator validatorNotes;    
+    @RequestMapping(path = "", method = POST)
+    public ResponseEntity<?> create(
+            final @RequestBody RestModel input) throws Exception {
+        input
+            .require("tags")
+            .rulesOnEachChildOf("tags", validateTagStructure("tags"));
     
-	@RequestMapping(value = "", method = POST)
-	public ResponseEntity<?> create(final HashModel input) {
-		input
-			.require("name", "dateOfBirthday")
-			.permit("description", "notes", "ownerUserId")
-			.rules(
-				"dateOfBirthday",
-				condition -> condition
-					.forType(BigDecimal.class)
-					.failsOn((all, v) -> v.compareTo(ZERO) > 0)
-					.warnWith("The 'fieldName' must be bigger than ZERO"))
-			.rules("notes", validatorNotes);
-		
-		if (input.isValid())
-		    return ResponseEntity
-		    	.created(URI.create("resources/" + entity.getId()))
-		    	.body(service.create(input));
-		else
-			return ResponseEntity
-				.badRequest()
-				.body(input.errors());
-	}
+        if (input.isValid())
+            return ok(service.create(input));
+        else
+            return badRequest().body(input.errors());
+    }
     
 ```
 
@@ -113,18 +106,13 @@ And you can update your entity model like this:
 ```java
 
     // Service.java
-    public EntityDTO create(final HashModel input) throws Exception {
-    	try {
-	    	final Entity entity = repo.save(input.bindTo(Entity.class));
-	    	entity.setCreatedAt(Instant.now());
-	    	entity.setCreatedBy(identity.getUserId());
-	    	entity.setAnyOtherDefaultValue("default value"); 
-	    	return EntityDTO.builder().with(saved).build();
-    	}
-    	catch (ModelValidationErrorsException e) {
-    		LOGGER.warning(e.getMessage());
-    		return null;
-    	}
+    public TagDTO create(final HashModel input) throws Exception {
+    	if (input.isValid()) {
+		final TagEntity tag = new TagEntity();
+		tag.setName(input.get("name").asString());
+		return TagDTO.builderFor(tag).build();
+	}
+	return null;
     }
 
 ```
