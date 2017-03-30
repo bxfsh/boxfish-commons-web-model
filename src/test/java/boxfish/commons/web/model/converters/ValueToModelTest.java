@@ -132,4 +132,24 @@ public class ValueToModelTest {
                 "field3.subField1",
                 "field4");
     }
+    
+    @Test(expected = IllegalStateException.class)
+    public void parse_from_json() throws Exception {
+        final String subMap = "{\"name\": \"\", \"score\": 3.5348}";
+
+        final Map<String, Object> expected = new HashMap<>();
+        expected.put("field1", "1341234asdasds");
+        expected.put("field2", Long.valueOf(123481));
+        expected.put("field3", subMap);
+        expected.put("field4", true);
+
+        new ValueToModel(expected)
+            .parse()
+            .permit(
+                "field_1",
+                "field_2",
+                "field_3",
+                "field3.subField1",
+                "field4");
+    }
 }

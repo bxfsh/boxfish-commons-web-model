@@ -1,5 +1,6 @@
 package boxfish.commons.web.model.sanitization;
 
+import static boxfish.commons.web.model.utils.JsonUtils.isJsonObject;
 import static java.lang.String.format;
 
 import java.lang.instrument.IllegalClassFormatException;
@@ -13,16 +14,17 @@ import java.util.Map;
  * Chooses the sanitizer that will be used to treat the value.
  * Important for pre-processing Maps and Lists with maps, because
  * Maps must be converted into RestModel before they are kept as data.
- * 
+ *
  * @author Hudson Mendes
  *
  */
 public class Sanitizer {
-    private static final Map<Class<?>, Class<? extends SanitizerFor<? extends Object, ?>>> SANITIZERS;
+    private static final Map<SanitizerValueMatcher, Class<? extends SanitizerFor<? extends Object, ?>>> SANITIZERS;
     static {
         SANITIZERS = new HashMap<>();
-        SANITIZERS.put(Map.class, SanitizerForMaps.class);
-        SANITIZERS.put(List.class, SanitizerForLists.class);
+        SANITIZERS.put((c, v) -> Map.class.isAssignableFrom(c), SanitizerForMaps.class);
+        SANITIZERS.put((c, v) -> List.class.isAssignableFrom(c), SanitizerForLists.class);
+        SANITIZERS.put((c, v) -> String.class.equals(c) && isJsonObject(v), SanitizerForJson.class);
     }
 
     private final Object value;
@@ -36,7 +38,7 @@ public class Sanitizer {
      * performs sanitization and returns the value. In
      * case no Sanitizer is found (or the value is null),
      * simply return the value that should remain unnaffected.
-     * 
+     *
      * @return the sanitized value if a Sanitizer was found, or the value itself.
      * @throws Exception throws whenever we fail to activate the Sanitizer.
      */
@@ -52,8 +54,8 @@ public class Sanitizer {
 
     private SanitizerFor<? extends Object, ?> chooseSanitizer() throws Exception {
         final Class<?> valueClass = value.getClass();
-        for (final Class<?> key : SANITIZERS.keySet())
-            if (key.isAssignableFrom(valueClass)) {
+        for (final SanitizerValueMatcher key : SANITIZERS.keySet())
+            if (key.shouldBeSanitized(valueClass, value)) {
                 final Class<? extends SanitizerFor<? extends Object, ?>> sanitizer = SANITIZERS.get(key);
                 final Constructor<?> constructor = findConstructor(sanitizer);
                 validateConstructor(sanitizer, constructor);

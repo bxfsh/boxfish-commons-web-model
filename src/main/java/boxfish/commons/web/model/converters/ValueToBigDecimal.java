@@ -1,6 +1,9 @@
 package boxfish.commons.web.model.converters;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * Sophisticated type conversion and parsing from Object to BigDecimal,
@@ -21,7 +24,7 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
         if (getValue() == null)
             return null;
 
-        BigDecimal decimal = makeBigDecimal();
+        final BigDecimal decimal = makeBigDecimal();
         if (decimal != null)
             return decimal.stripTrailingZeros();
         else
@@ -30,7 +33,7 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
 
     private BigDecimal makeBigDecimal() {
         if (String.class.equals(getValueClass()))
-            return new BigDecimal((String) getValue());
+            return (BigDecimal) formatStringJustInCase();
 
         if (BigDecimal.class.equals(getValueClass()))
             return (BigDecimal) getValue();
@@ -54,5 +57,17 @@ public class ValueToBigDecimal extends AbstractValueConverter<BigDecimal> {
             return BigDecimal.valueOf((Long) getValue());
 
         return null;
+    }
+
+    private Number formatStringJustInCase() {
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        final DecimalFormat format = new DecimalFormat("0.0", symbols);
+        format.setParseBigDecimal(true);
+        try {
+            return format.parse((String) getValue());
+        }
+        catch (final Exception e) {
+            return BigDecimal.ZERO;
+        }
     }
 }

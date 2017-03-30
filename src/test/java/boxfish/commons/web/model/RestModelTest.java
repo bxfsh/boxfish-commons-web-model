@@ -295,7 +295,7 @@ public class RestModelTest {
     }
 
     @Test
-    public void hasNonBlank_string() {
+    public void has_string() {
         assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
         assertFalse(model.has("field_1"));
@@ -306,7 +306,7 @@ public class RestModelTest {
     }
 
     @Test
-    public void hasNonBlank_model() {
+    public void has_model() {
         assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
         assertFalse(model.has("field_1"));
@@ -317,7 +317,7 @@ public class RestModelTest {
     }
 
     @Test
-    public void hasNonBlank_list() {
+    public void has_list() {
         assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
         assertFalse(model.has("field_1"));
@@ -328,7 +328,7 @@ public class RestModelTest {
     }
 
     @Test
-    public void hasNonBlank_decimal() {
+    public void has_decimal() {
         assertFalse(model.has("field_1"));
         model.permit("field_1").value("field1", null);
         assertFalse(model.has("field_1"));
