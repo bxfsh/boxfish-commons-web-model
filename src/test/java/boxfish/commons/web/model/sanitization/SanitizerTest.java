@@ -37,6 +37,21 @@ public class SanitizerTest {
     }
 
     @Test
+    public void json() throws Exception {
+        final String expected = "{field1:123.12345454, \"field2\":\"value\"}";
+
+        final Object actual = new Sanitizer(expected).sanitize();
+
+        assertNotEquals(expected, actual);
+        assertThat(actual, instanceOf(RestModel.class));
+
+        final RestModel parsed = (RestModel) actual;
+        parsed.permit("field_1", "field_2");
+        assertEquals(new BigDecimal("123.12345454"), parsed.get("field_1").asBigDecimal());
+        assertEquals("value", parsed.get("field_2").asString());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void lists() throws Exception {
         final LinkedList<Object> expected = new LinkedList<>();
@@ -76,7 +91,7 @@ public class SanitizerTest {
             (short) 3174,
             "strigsy495");
 
-        for (Object value : unnafected)
+        for (final Object value : unnafected)
             assertEquals(value, new Sanitizer(value).sanitize());
     }
 }
