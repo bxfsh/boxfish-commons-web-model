@@ -62,7 +62,7 @@ public class ModelValidator {
         }
     }
 
-    private Boolean attemptIsValid() throws Exception {
+    private Boolean attemptIsValid() {
         final ModelErrors result = validate();
         return !result.hasErrors();
     }
@@ -73,9 +73,8 @@ public class ModelValidator {
      * and against the rules.
      *
      * @return the collection of errors.
-     * @throws Exception in case the validation fails to run rules.
      */
-    public ModelErrors validate() throws Exception {
+    public ModelErrors validate() {
         final ModelErrors errors = new ModelErrors();
         for (final String required : requireds)
             if (!hashModel.containsKey(required) || hashModel.get(required).isNull())
