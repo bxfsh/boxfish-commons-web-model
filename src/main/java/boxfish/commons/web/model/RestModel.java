@@ -231,9 +231,8 @@ public class RestModel implements Map<String, Object> {
      * The list of model errors (failures meeting requirements or rules).
      *
      * @return the list of model errors.
-     * @throws Exception in case any of the rules throw an error.
      */
-    public ModelErrors errors() throws Exception {
+    public ModelErrors errors() {
         return new ModelValidator(this, requireds, rules, childreenRules).validate();
     }
 
@@ -254,6 +253,18 @@ public class RestModel implements Map<String, Object> {
                 return new RestValue(baseline.get(treated));
 
         return new RestValue(null);
+    }
+
+    /**
+     * If permitted, returned a wrapped RestValue.
+     * In case a value is not found for the field and a baseline value is found,
+     * we return the baseline value as the value.
+     *
+     * @param field the field you want to retrieve.
+     * @return the wrapped RestValue.
+     */
+    public RestValue value(final String field) {
+        return get(field);
     }
 
     /**
@@ -305,7 +316,7 @@ public class RestModel implements Map<String, Object> {
 
     /**
      * Reports if the value is null, blank (Strings) or empty (lists/maps).
-     * 
+     *
      * @param key the key that will be checked against the data, after normalised.
      * @return true if the value is null, blank or empty; false otherwise.
      */
