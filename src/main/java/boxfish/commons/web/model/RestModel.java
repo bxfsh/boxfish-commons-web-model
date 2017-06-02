@@ -59,7 +59,8 @@ public class RestModel implements Map<String, Object> {
      */
     public static RestModel restModelFrom(final Map<String, Object> input) {
         final RestModel created = newRestModel();
-        created.putAll(input);
+        if (input != null && !input.isEmpty())
+            created.putAll(input);
         return created;
     }
 
@@ -69,6 +70,7 @@ public class RestModel implements Map<String, Object> {
     private final Map<String, Object> baseline = new LinkedHashMap<>();
     private final Map<String, List<Validator>> rules = new ConcurrentHashMap<>();
     private final Map<String, List<Validator>> childreenRules = new ConcurrentHashMap<>();
+    private boolean permitAll = false;
 
     /**
      * Permit a field_name to ever be retrieved.
@@ -108,6 +110,30 @@ public class RestModel implements Map<String, Object> {
     }
 
     /**
+     * Causes all keys to be permitted, not just the ones declared
+     * as either permitted or required. Beware this may cause externally
+     * received data to corrupt your data in unexpected/undesired ways.
+     *
+     * @return itself
+     */
+    public RestModel permitAll() {
+        permitAll = true;
+        return this;
+    }
+
+    /**
+     * DEFAULT BEHAVOUR, does not need to invoked. This method should
+     * only be invoked IF you have previously invoked permitAll() and
+     * want to return the the original behaviour.
+     *
+     * @return itself
+     */
+    public RestModel permitOnlyExplicitelyDeclared() {
+        permitAll = false;
+        return this;
+    }
+
+    /**
      * Make a particular field required, causing isValid and
      * errors to return validation failures and helping the
      * exposition of validation errors to the external world.
@@ -124,10 +150,8 @@ public class RestModel implements Map<String, Object> {
                     final String fieldOfThisLevel = fieldAndSubFields.get(0);
 
                     final String treated = key(fieldOfThisLevel);
-                    if (!requireds.contains(treated)) {
+                    if (!requireds.contains(treated))
                         requireds.add(treated);
-                        permitteds.add(treated);
-                    }
 
                     if (fieldAndSubFields.size() > 1) {
                         final String fieldOfDownwardLevels = fieldAndSubFields.stream().skip(1).collect(joining(FIELD_LEVEL_SEPARATOR));
@@ -246,7 +270,7 @@ public class RestModel implements Map<String, Object> {
      */
     public RestValue get(final String field) {
         final String treated = key(field);
-        if (permitteds.contains(treated))
+        if (isAccepted(treated))
             if (data.containsKey(treated))
                 return new RestValue(data.get(treated));
             else if (baseline.containsKey(treated))
@@ -283,7 +307,7 @@ public class RestModel implements Map<String, Object> {
     @Override
     public boolean containsKey(final Object key) {
         final String treated = key(String.valueOf(key));
-        if (!permitteds.contains(treated))
+        if (!isAccepted(treated))
             return false;
 
         return data.containsKey(treated) && data.get(treated) != null;
@@ -357,7 +381,7 @@ public class RestModel implements Map<String, Object> {
         return data
             .entrySet()
             .stream()
-            .filter(i -> permitteds.contains(i.getKey()))
+            .filter(i -> isAccepted(i.getKey()))
             .collect(Collectors.toSet());
     }
 
@@ -384,7 +408,7 @@ public class RestModel implements Map<String, Object> {
         return !data
             .keySet()
             .stream()
-            .filter(fieldName -> permitteds.contains(fieldName))
+            .filter(fieldName -> isAccepted(fieldName))
             .findAny()
             .isPresent();
     }
@@ -397,7 +421,7 @@ public class RestModel implements Map<String, Object> {
         return data
             .keySet()
             .stream()
-            .filter(fieldName -> permitteds.contains(fieldName))
+            .filter(fieldName -> isAccepted(fieldName))
             .collect(Collectors.toSet());
     }
 
@@ -451,7 +475,7 @@ public class RestModel implements Map<String, Object> {
         return (int) data
             .keySet()
             .stream()
-            .filter(fieldName -> permitteds.contains(fieldName))
+            .filter(fieldName -> isAccepted(fieldName))
             .count();
     }
 
@@ -463,7 +487,7 @@ public class RestModel implements Map<String, Object> {
         return data
             .entrySet()
             .stream()
-            .filter(entry -> permitteds.contains(entry.getKey()))
+            .filter(entry -> isAccepted(entry.getKey()))
             .map(entry -> entry.getValue())
             .collect(Collectors.toList());
     }
@@ -506,7 +530,8 @@ public class RestModel implements Map<String, Object> {
      * @return true in case permit or require mention the field, and false otherwise.
      */
     public boolean isAccepted(final String fieldName) {
-        return permitteds.contains(key(fieldName))
+        return permitAll
+               || permitteds.contains(key(fieldName))
                || requireds.contains(key(fieldName));
     }
 
