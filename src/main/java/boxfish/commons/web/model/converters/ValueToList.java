@@ -1,6 +1,7 @@
 package boxfish.commons.web.model.converters;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public class ValueToList extends AbstractValueConverter<List<RestValue>> {
     @Override
     public List<RestValue> parse() {
         if (getValue() == null)
-            return null;
+            return emptyList();
 
         if (Object[].class.equals(getValueClass()))
             return collectAsList((Object[]) getValue());

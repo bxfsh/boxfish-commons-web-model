@@ -1,5 +1,6 @@
 package boxfish.commons.web.model.converters;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -13,6 +14,12 @@ import org.junit.Test;
 import boxfish.commons.web.model.RestModel;
 
 public class ValueToListTest {
+    @Test
+    public void parse_from_null() throws Exception {
+        final List<String> expected = null;
+        assertEquals(emptyList(), new ValueToList(expected).parse());
+    }
+
     @Test
     public void parse_from_string() throws Exception {
         final String expected = "true";
