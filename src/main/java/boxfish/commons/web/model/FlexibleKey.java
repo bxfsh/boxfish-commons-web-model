@@ -15,7 +15,7 @@ class FlexibleKey {
 
     private final String field;
 
-    private static final String SPECIAL_CHARACTERS = "[^\\w\\s\\-_]";
+    private static final String SPECIAL_CHARACTERS = "[^\\w\\d]";
     private static final String SNAKE_CASE = "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|(?<=[a-zA-‌​Z])(?=[0-9])";
     private static final String MULTIPLE_UNDERSCORES = "_+";
 
@@ -47,7 +47,7 @@ class FlexibleKey {
 
     private String treat(final String field) {
         return field
-            .replaceAll(SPECIAL_CHARACTERS, "")
+            .replaceAll(SPECIAL_CHARACTERS, "_")
             .replaceAll(SNAKE_CASE, "_$0")
             .replaceAll(MULTIPLE_UNDERSCORES, "_")
             .toLowerCase();
